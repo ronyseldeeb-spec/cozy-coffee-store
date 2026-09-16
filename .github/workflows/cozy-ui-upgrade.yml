@@ -19,14 +19,11 @@ jobs:
         run: |
           python3 <<'PY'
           from pathlib import Path
-          import re
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
 
-          # The previous workflow accidentally wrote the two UI blocks with
-          # literal backslash-n characters, so the JavaScript never executed.
-          # Normalize only the generated premium blocks.
+          # Repair the generated premium blocks from the previous workflow.
           for marker, closing in [
               ('<style id="cozy-premium-home-css">', '</style>'),
               ('<script id="cozy-premium-home-js">', '</script>')
@@ -42,7 +39,6 @@ jobs:
               block = block.replace('\\\\n', '\n')
               html = html[:start] + block + html[end:]
 
-          # Also remove a literal \n immediately before the generated tags.
           html = html.replace('\\n<style id="cozy-premium-home-css">', '<style id="cozy-premium-home-css">')
           html = html.replace('\\n<script id="cozy-premium-home-js">', '<script id="cozy-premium-home-js">')
 
