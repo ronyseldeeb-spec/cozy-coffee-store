@@ -1601,7 +1601,23 @@
             emailjs.init("5cJi2AW6yCpd6RHAa");
         })();
 
-        // Persistent browser data is intentionally kept for orders and reviews.
+        /*
+         * SHARED REVIEWS DATABASE
+         * -----------------------
+         * GitHub Pages is static, so localStorage alone cannot make reviews
+         * visible on other phones. Put your Supabase project URL and anon key
+         * here after creating the `reviews` table with the SQL provided.
+         * Never put a service_role key here.
+         */
+        const REVIEWS_DB = {
+            url: "https://qkecjuntvigysgotwrht.supabase.co",
+            anonKey: "sb_publishable_YxS5r3oz1_cuwhilVDqwbg_wpIYTapX"
+        };
+        const REVIEWS_TABLE = "reviews";
+
+        // Persistent browser data is intentionally kept for orders. Reviews
+        // use the shared database when configured, with localStorage as an
+        // offline fallback only.
 
         const catalog = [
             { 
@@ -1981,15 +1997,128 @@
         }
         function scrollToCrave(){ switchPage('store'); setTimeout(()=>document.getElementById('craving-strip')?.scrollIntoView({behavior:'smooth',block:'start'}),120); }
         function toggleSideMenu(open){ const m=document.getElementById('side-menu'), o=document.getElementById('side-menu-overlay'); if(!m||!o)return; m.classList.toggle('open',open); o.classList.toggle('open',open); m.setAttribute('aria-hidden',String(!open)); document.body.classList.toggle('menu-open',open); }
-        function openReviewsPage(){ switchPage('reviews'); renderReviews(); }
-        function loadReviews(){ try{return JSON.parse(localStorage.getItem('cozy_reviews')||'[]')}catch{return []} }
-        function renderReviews(){ const list=document.getElementById('reviews-list'); if(!list)return; const reviews=loadReviews().sort((a,b)=>b.createdAt-a.createdAt); const avg=reviews.length?reviews.reduce((s,r)=>s+r.rating,0)/reviews.length:0; const rounded=Math.round(avg); const stars='★'.repeat(rounded)+'☆'.repeat(5-rounded); document.getElementById('reviews-average').innerText=avg.toFixed(1); document.getElementById('reviews-stars').innerText=stars; document.getElementById('reviews-count-label').innerText=reviews.length?`${reviews.length} review${reviews.length>1?'s':''}`:'No reviews yet'; list.innerHTML=reviews.length?reviews.map(r=>`<article class="review-item"><div class="review-item-top"><span class="review-author">${escapeHtml(r.name||'Cozy customer')}</span><span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div><p>${escapeHtml(r.text||'Loved it!')}</p><span class="review-date">${new Date(r.createdAt).toLocaleDateString()}</span></article>`).join(''):`<div class="empty-reviews"><div style="font-size:2rem">☕</div><p>No reviews yet. Be the first cozy voice.</p></div>`; }
+        function reviewsCloudEnabled(){
+            return Boolean(REVIEWS_DB.url && REVIEWS_DB.anonKey);
+        }
+
+        async function fetchSharedReviews(){
+            if(!reviewsCloudEnabled()) return null;
+            const base=REVIEWS_DB.url.replace(/\/$/, '');
+            const url=`${base}/rest/v1/${REVIEWS_TABLE}?select=id,name,rating,review_text,created_at&order=created_at.desc&limit=500`;
+            const res=await fetch(url,{
+                method:'GET',
+                headers:{'apikey':REVIEWS_DB.anonKey}
+            });
+            if(!res.ok) throw new Error(`Reviews load failed (${res.status})`);
+            const rows=await res.json();
+            return rows.map(r=>({
+                id:r.id,
+                name:r.name||'Cozy customer',
+                rating:Number(r.rating),
+                text:r.review_text||'',
+                createdAt:new Date(r.created_at).getTime()
+            }));
+        }
+
+        async function saveSharedReview(review){
+            if(!reviewsCloudEnabled()) return false;
+            const base=REVIEWS_DB.url.replace(/\/$/, '');
+            const url=`${base}/rest/v1/${REVIEWS_TABLE}`;
+            const res=await fetch(url,{
+                method:'POST',
+                headers:{
+                    'apikey':REVIEWS_DB.anonKey,
+                    'Content-Type':'application/json',
+                    'Prefer':'return=representation'
+                },
+                body:JSON.stringify({
+                    name:review.name,
+                    rating:review.rating,
+                    review_text:review.text
+                })
+            });
+            if(!res.ok){
+                const detail=await res.text().catch(()=> '');
+                throw new Error(`Review save failed (${res.status}) ${detail}`);
+            }
+            const rows=await res.json();
+            return rows?.[0] || true;
+        }
+
+        function openReviewsPage(){
+            switchPage('reviews');
+            renderReviews();
+        }
+
+        function loadReviewsLocal(){
+            try{return JSON.parse(localStorage.getItem('cozy_reviews')||'[]')}catch{return []}
+        }
+
+        async function getReviews(){
+            if(reviewsCloudEnabled()){
+                try{
+                    const shared=await fetchSharedReviews();
+                    if(Array.isArray(shared)) return shared;
+                }catch(err){
+                    console.warn('Shared reviews unavailable, using offline reviews:',err);
+                }
+            }
+            return loadReviewsLocal();
+        }
+
+        async function renderReviews(){
+            const list=document.getElementById('reviews-list');
+            if(!list)return;
+            list.innerHTML=`<div class="empty-reviews"><div style="font-size:2rem">☕</div><p>Loading reviews…</p></div>`;
+            const reviews=(await getReviews()).sort((a,b)=>b.createdAt-a.createdAt);
+            const avg=reviews.length?reviews.reduce((sum,r)=>sum+Number(r.rating||0),0)/reviews.length:0;
+            const rounded=Math.round(avg);
+            const stars='★'.repeat(rounded)+'☆'.repeat(5-rounded);
+            document.getElementById('reviews-average').innerText=avg.toFixed(1);
+            document.getElementById('reviews-stars').innerText=stars;
+            document.getElementById('reviews-count-label').innerText=reviews.length?`${reviews.length} review${reviews.length>1?'s':''}`:'No reviews yet';
+            list.innerHTML=reviews.length?reviews.map(r=>`<article class="review-item"><div class="review-item-top"><span class="review-author">${escapeHtml(r.name||'Cozy customer')}</span><span class="review-stars">${'★'.repeat(Number(r.rating||0))}${'☆'.repeat(5-Number(r.rating||0))}</span></div><p>${escapeHtml(r.text||'Loved it!')}</p><span class="review-date">${new Date(r.createdAt||Date.now()).toLocaleDateString()}</span></article>`).join(''):`<div class="empty-reviews"><div style="font-size:2rem">☕</div><p>No reviews yet. Be the first cozy voice.</p></div>`;
+        }
+
         function openReviewModal(){ selectedRating=0; updateStarPicker(); document.getElementById('review-modal').style.display='flex'; }
         function closeReviewModal(){ document.getElementById('review-modal').style.display='none'; }
         let selectedRating=0;
         function setRating(n){ selectedRating=n; updateStarPicker(); }
         function updateStarPicker(){ document.querySelectorAll('#star-picker button').forEach(b=>b.classList.toggle('active',Number(b.dataset.star)<=selectedRating)); }
-        function submitReview(){ if(selectedRating<1){showToast('⭐ Pick a rating first');return;} const text=document.getElementById('review-text').value.trim(); const name=document.getElementById('review-name').value.trim()||'Cozy customer'; if(!text){showToast('✍️ Tell us a little about it');return;} const reviews=loadReviews(); reviews.push({rating:selectedRating,name,text,createdAt:Date.now()}); localStorage.setItem('cozy_reviews',JSON.stringify(reviews)); closeReviewModal(); renderReviews(); showToast('Thanks! Your review is now in Reviews ✨'); }
+
+        async function submitReview(){
+            if(selectedRating<1){showToast('⭐ Pick a rating first');return;}
+            const text=document.getElementById('review-text').value.trim();
+            const name=document.getElementById('review-name').value.trim()||'Cozy customer';
+            const submitBtn=document.querySelector('#review-modal .review-submit');
+            if(!text){showToast('✍️ Tell us a little about it');return;}
+
+            const review={rating:selectedRating,name,text,createdAt:Date.now()};
+            if(submitBtn){submitBtn.disabled=true;submitBtn.querySelector('span').innerText='Publishing…';}
+
+            try{
+                if(reviewsCloudEnabled()){
+                    await saveSharedReview(review);
+                    closeReviewModal();
+                    document.getElementById('review-text').value='';
+                    document.getElementById('review-name').value='';
+                    await renderReviews();
+                    showToast('Thanks! Your review is visible to everyone ✨');
+                }else{
+                    const reviews=loadReviewsLocal();
+                    reviews.push(review);
+                    localStorage.setItem('cozy_reviews',JSON.stringify(reviews));
+                    closeReviewModal();
+                    await renderReviews();
+                    showToast('Review saved on this device. Add the shared database to show it to everyone.');
+                }
+            }catch(err){
+                console.error(err);
+                showToast('Could not publish right now. Please try again.');
+            }finally{
+                if(submitBtn){submitBtn.disabled=false;submitBtn.querySelector('span').innerText='Publish review';}
+            }
+        }
         function escapeHtml(str){ const d=document.createElement('div'); d.textContent=String(str); return d.innerHTML; }
 
         function filterCategory(cat) {
@@ -2155,7 +2284,7 @@
             const toast = document.getElementById('toast');
             toast.querySelector('span').innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2200);
+            setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
         function openAuthModal() { document.getElementById('auth-modal').style.display = 'flex'; }
