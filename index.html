@@ -2427,6 +2427,8 @@
             createTab.classList.toggle('active', authMode === 'create');
             signedPanel.style.display = 'none';
             form.style.display = 'block';
+            const tabs = document.querySelector('.auth-tabs');
+            if (tabs) tabs.style.display = 'grid';
         }
 
         function openAuthModal() {
@@ -2493,8 +2495,12 @@
         function showSignedInAccount(account) {
             const form = document.getElementById('auth-form');
             const panel = document.getElementById('signed-in-panel');
+            const tabs = document.querySelector('.auth-tabs');
             form.style.display = 'none';
             panel.style.display = 'block';
+            if (tabs) tabs.style.display = 'none';
+            document.getElementById('auth-title').textContent = 'Your Account';
+            document.getElementById('auth-subtitle').textContent = 'Manage your account details and sign out securely.';
             document.getElementById('signed-user-name').textContent = `Hello, ${account.name || 'Customer'}!`;
             document.getElementById('signed-user-email').textContent = account.email || '';
             document.getElementById('account-info-list').innerHTML = `
@@ -2507,9 +2513,13 @@
 
         function signOut() {
             localStorage.removeItem('cozy_account');
+            localStorage.removeItem('cozy_customer_profile');
             setAuthMode('signin');
             document.getElementById('saved-email').value = '';
             document.getElementById('saved-password').value = '';
+            document.getElementById('saved-password-confirm').value = '';
+            const profileBtn = document.getElementById('user-profile-btn');
+            if (profileBtn) profileBtn.innerHTML = '<span>♙</span> Account';
             showToast('Signed out');
         }
 
