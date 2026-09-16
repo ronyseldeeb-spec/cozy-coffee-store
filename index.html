@@ -1276,6 +1276,43 @@
 }
 </style>
 
+
+<style id="toast-fix">
+/* FINAL TOAST FIX: reliably disappears on mobile and desktop */
+.toast {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform .3s ease, opacity .3s ease, visibility .3s ease;
+}
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+}
+@media (max-width: 800px) {
+    .toast {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+        max-width: none !important;
+        transform: translateY(150%) !important;
+        text-align: center;
+        white-space: normal;
+    }
+    .toast.show {
+        transform: translateY(0) !important;
+    }
+}
+@media (min-width: 801px) {
+    .toast {
+        transform: translateX(-50%) translateY(150%) !important;
+    }
+    .toast.show {
+        transform: translateX(-50%) translateY(0) !important;
+    }
+}
+</style>
+
 </head>
 <body>
 
@@ -2007,7 +2044,7 @@
             const url=`${base}/rest/v1/${REVIEWS_TABLE}?select=id,name,rating,review_text,created_at&order=created_at.desc&limit=500`;
             const res=await fetch(url,{
                 method:'GET',
-                headers:{'apikey':REVIEWS_DB.anonKey}
+                headers:{'apikey':REVIEWS_DB.anonKey,'Authorization':`Bearer ${REVIEWS_DB.anonKey}`}
             });
             if(!res.ok) throw new Error(`Reviews load failed (${res.status})`);
             const rows=await res.json();
@@ -2028,6 +2065,7 @@
                 method:'POST',
                 headers:{
                     'apikey':REVIEWS_DB.anonKey,
+                    'Authorization':`Bearer ${REVIEWS_DB.anonKey}`,
                     'Content-Type':'application/json',
                     'Prefer':'return=representation'
                 },
@@ -2280,11 +2318,46 @@
 
         window.addEventListener('resize', () => updateCartBadge());
 
+        // Robust toast notification: always clears the previous timer and
+        // completely hides the toast after the message duration. This fixes
+        // the mobile toast getting stuck at the bottom of the screen.
+        let toastTimer = null;
+        let toastHideTimer = null;
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            toast.querySelector('span').innerText = msg;
+            if (!toast) return;
+
+            const text = toast.querySelector('span');
+            if (text) text.innerText = msg;
+
+            if (toastTimer) clearTimeout(toastTimer);
+            if (toastHideTimer) clearTimeout(toastHideTimer);
+
+            toast.classList.remove('show');
+            toast.style.opacity = '0';
+            toast.style.visibility = 'hidden';
+
+            // Force the browser to apply the hidden state before showing it
+            // again. This also makes repeated taps on mobile reliable.
+            void toast.offsetWidth;
+
+            toast.style.opacity = '1';
+            toast.style.visibility = 'visible';
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 4000);
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toast.style.opacity = '0';
+                toast.style.visibility = 'hidden';
+
+                toastHideTimer = setTimeout(() => {
+                    if (!toast.classList.contains('show')) {
+                        toast.style.opacity = '';
+                        toast.style.visibility = '';
+                    }
+                }, 350);
+            }, 2200);
         }
 
         function openAuthModal() { document.getElementById('auth-modal').style.display = 'flex'; }
