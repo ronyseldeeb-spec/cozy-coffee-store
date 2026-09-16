@@ -930,6 +930,11 @@
 
     </style>
 
+    <style>
+      .auth-card{max-width:500px}.auth-brand{font-family:'Playfair Display',serif;color:var(--coffee);font-size:.9rem;margin-bottom:10px}.auth-heading h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:var(--ink);margin-bottom:4px}.auth-heading p{font-size:.74rem;color:#827164;margin-bottom:14px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#F5ECE4;border:1px solid #E6D5C7;border-radius:13px;padding:4px;margin-bottom:14px}.auth-tabs button{border:0;background:transparent;border-radius:9px;padding:9px;font-size:.72rem;font-weight:800;color:#806B5B;cursor:pointer}.auth-tabs button.active{background:#fff;color:var(--ink);box-shadow:0 3px 10px rgba(74,43,27,.07)}.auth-field{margin-bottom:10px}.auth-field label{font-size:.7rem}.auth-field input,.auth-field textarea{font-size:.86rem}.auth-submit{margin-top:4px}.auth-note{font-size:.58rem;color:#99887A;text-align:center;margin-top:12px;line-height:1.45}.signed-in-panel{text-align:center}.signed-avatar{width:58px;height:58px;border-radius:50%;background:#F2E4D8;display:grid;place-items:center;margin:4px auto 8px;font-size:1.5rem}.signed-in-panel h3{font-family:'Playfair Display',serif;color:var(--ink);font-size:1.25rem}.signed-in-panel>p{font-size:.7rem;color:#8B7869;margin:2px 0 14px}.account-info-list{display:grid;gap:7px;text-align:left;margin-bottom:14px}.account-info-list div{background:#FAF5F0;border:1px solid #E7D9CC;border-radius:11px;padding:8px 10px}.account-info-list small{display:block;color:#9A8879;font-size:.58rem}.account-info-list strong{display:block;color:var(--ink);font-size:.72rem;margin-top:2px;overflow-wrap:anywhere}
+      @media(max-width:768px){.auth-card{max-width:none;width:100%;max-height:90vh;padding:1rem}.auth-heading h2{font-size:1.55rem}.auth-tabs button{padding:10px}.auth-field input,.auth-field textarea{min-height:44px}.auth-note{font-size:.57rem}}
+    </style>
+
     <!-- FINAL MOBILE UX OVERRIDES -->
     <style>
     @media (max-width: 768px) {
@@ -994,7 +999,9 @@
             border-radius:15px; padding-left:13px;
             box-shadow:0 7px 18px rgba(74,43,27,.07);
         }
-        .smart-search input { font-size:16px !important; }
+        .smart-search input { font-size:16px !important; position:relative; z-index:2; }
+         .smart-search { position:relative; z-index:20; }
+         .smart-search button { flex:0 0 auto; }
         .hero-shortcuts { margin-top:10px; }
         .hero-shortcuts button { min-height:36px; padding:0 11px; font-size:.63rem; }
         .hero-feature-row {
@@ -1474,6 +1481,7 @@
                             </div>
                             <div class="form-grid">
                                 <div class="form-group"><label for="cust-name">Full Name</label><input type="text" id="cust-name" required autocomplete="name" placeholder="e.g. Ahmed Hassan"></div>
+                                <div class="form-group"><label for="cust-email">Email</label><input type="email" id="cust-email" required autocomplete="email" placeholder="you@example.com"></div>
                                 <div class="form-group"><label for="cust-phone">Phone Number</label><input type="tel" id="cust-phone" required autocomplete="tel" placeholder="01012345678"></div>
                                 <div class="form-group full-width"><label for="cust-address">Delivery Address</label><textarea id="cust-address" rows="3" required autocomplete="street-address" placeholder="Building, street, area..."></textarea></div>
                             </div>
@@ -1556,28 +1564,42 @@
         </div>
     </div>
 
-    <!-- USER PROFILE MODAL -->
+    <!-- AMAZON-STYLE ACCOUNT / SIGN-IN MODAL -->
     <div class="modal-overlay" id="auth-modal">
-        <div class="modal-card">
+        <div class="modal-card auth-card">
             <button class="modal-close" onclick="closeAuthModal()">&times;</button>
-            <h2 style="font-family: 'Playfair Display', serif; color: var(--primary-dark); font-size: 1.3rem; margin-bottom: 0.3rem;">Customer Profile</h2>
-            <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 0.8rem;">Save info for faster checkout!</p>
+            <div class="auth-brand">☕ <strong>Cozy Brews & Bakery</strong></div>
+            <div class="auth-heading">
+                <h2 id="auth-title">Sign in</h2>
+                <p id="auth-subtitle">Sign in to see your orders and manage your account.</p>
+            </div>
 
-            <form onsubmit="saveCustomerProfile(event)">
-                <div class="form-group" style="margin-bottom:0.7rem;">
-                    <label>Full Name</label>
-                    <input type="text" id="saved-name" required placeholder="Enter full name">
+            <div class="auth-tabs">
+                <button type="button" id="auth-signin-tab" class="active" onclick="setAuthMode('signin')">Sign in</button>
+                <button type="button" id="auth-create-tab" onclick="setAuthMode('create')">Create account</button>
+            </div>
+
+            <form id="auth-form" onsubmit="submitAuth(event)">
+                <div id="create-account-fields">
+                    <div class="form-group auth-field"><label for="saved-name">Your name</label><input type="text" id="saved-name" autocomplete="name" placeholder="First and last name"></div>
+                    <div class="form-group auth-field"><label for="saved-phone">Mobile number</label><input type="tel" id="saved-phone" autocomplete="tel" placeholder="01012345678"></div>
+                    <div class="form-group auth-field"><label for="saved-address">Delivery address</label><textarea id="saved-address" rows="2" autocomplete="street-address" placeholder="Building, street, area..."></textarea></div>
                 </div>
-                <div class="form-group" style="margin-bottom:0.7rem;">
-                    <label>Phone Number</label>
-                    <input type="tel" id="saved-phone" required placeholder="Enter phone number">
-                </div>
-                <div class="form-group" style="margin-bottom:0.7rem;">
-                    <label>Default Address</label>
-                    <textarea id="saved-address" rows="2" required placeholder="Enter default address"></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Save Info</button>
+                <div class="form-group auth-field"><label for="saved-email">Email</label><input type="email" id="saved-email" required autocomplete="email" placeholder="you@example.com"></div>
+                <div class="form-group auth-field"><label for="saved-password">Password</label><input type="password" id="saved-password" required autocomplete="current-password" minlength="6" placeholder="At least 6 characters"></div>
+                <div class="form-group auth-field" id="confirm-password-wrap"><label for="saved-password-confirm">Re-enter password</label><input type="password" id="saved-password-confirm" autocomplete="new-password" minlength="6" placeholder="Re-enter your password"></div>
+                <button type="submit" class="submit-btn auth-submit"><span id="auth-submit-text">Sign in</span><b>→</b></button>
             </form>
+
+            <div id="signed-in-panel" class="signed-in-panel" style="display:none;">
+                <div class="signed-avatar">👤</div>
+                <h3 id="signed-user-name">Welcome!</h3>
+                <p id="signed-user-email"></p>
+                <div class="account-info-list" id="account-info-list"></div>
+                <button type="button" class="submit-btn" onclick="signOut()"><span>Sign out</span><b>↪</b></button>
+            </div>
+
+            <p class="auth-note">Your account is saved only in this browser. This is a local website account, not a real Amazon account.</p>
         </div>
     </div>
 
@@ -1931,6 +1953,12 @@
             syncOrders();
             renderTrackerModalContent();
             startTimerIfActive();
+            const searchInput = document.getElementById('menu-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', e => handleSearch(e.target.value));
+                searchInput.addEventListener('search', e => handleSearch(e.target.value));
+                searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(e.target.value); } });
+            }
         });
 
         function updateOrdersCounterDisplay() {
@@ -2177,26 +2205,36 @@
         }
 
         function handleSearch(value) {
-            searchQuery = value.trim().toLowerCase();
+            searchQuery = String(value || '').trim().toLowerCase();
+            activeCategory = 'all';
             const input = document.getElementById('menu-search');
+            if (input && input.value !== value) input.value = value;
             input?.parentElement.classList.toggle('has-value', !!searchQuery);
-            renderMenu(activeCategory);
+            // Search must work across the entire menu on phones, even if a category
+            // was selected before typing.
+            renderMenu('all');
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
         }
 
         function clearSearch() {
             const input = document.getElementById('menu-search');
             if (!input) return;
             input.value = '';
-            handleSearch('');
-            input.focus();
+            searchQuery = '';
+            input.parentElement.classList.remove('has-value');
+            activeCategory = 'all';
+            renderMenu('all');
+            input.focus({preventScroll:true});
         }
 
         function focusSearch() {
             switchPage('store');
             const input = document.getElementById('menu-search');
             if (input) {
-                input.focus();
-                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    input.focus({preventScroll:true});
+                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 120);
             }
         }
 
@@ -2360,36 +2398,139 @@
             }, 2200);
         }
 
-        function openAuthModal() { document.getElementById('auth-modal').style.display = 'flex'; }
+        let authMode = 'signin';
+
+        function setAuthMode(mode) {
+            authMode = mode === 'create' ? 'create' : 'signin';
+            const createFields = document.getElementById('create-account-fields');
+            const confirmWrap = document.getElementById('confirm-password-wrap');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const submitText = document.getElementById('auth-submit-text');
+            const signinTab = document.getElementById('auth-signin-tab');
+            const createTab = document.getElementById('auth-create-tab');
+            const password = document.getElementById('saved-password');
+            const signedPanel = document.getElementById('signed-in-panel');
+            const form = document.getElementById('auth-form');
+            if (!createFields || !confirmWrap || !form) return;
+            createFields.style.display = authMode === 'create' ? 'block' : 'none';
+            confirmWrap.style.display = authMode === 'create' ? 'block' : 'none';
+            document.getElementById('saved-name').required = authMode === 'create';
+            document.getElementById('saved-phone').required = authMode === 'create';
+            document.getElementById('saved-address').required = authMode === 'create';
+            document.getElementById('saved-password-confirm').required = authMode === 'create';
+            password.autocomplete = authMode === 'create' ? 'new-password' : 'current-password';
+            title.textContent = authMode === 'create' ? 'Create account' : 'Sign in';
+            subtitle.textContent = authMode === 'create' ? 'Create your Cozy account for faster checkout and order tracking.' : 'Sign in to see your orders and manage your account.';
+            submitText.textContent = authMode === 'create' ? 'Create account' : 'Sign in';
+            signinTab.classList.toggle('active', authMode === 'signin');
+            createTab.classList.toggle('active', authMode === 'create');
+            signedPanel.style.display = 'none';
+            form.style.display = 'block';
+        }
+
+        function openAuthModal() {
+            document.getElementById('auth-modal').style.display = 'flex';
+            const account = getStoredAccount();
+            if (account) {
+                showSignedInAccount(account);
+            } else {
+                setAuthMode('signin');
+            }
+        }
+
         function closeAuthModal() { document.getElementById('auth-modal').style.display = 'none'; }
+
+        function getStoredAccount() {
+            try { return JSON.parse(localStorage.getItem('cozy_account') || 'null'); } catch(e) { return null; }
+        }
+
+        async function hashPassword(password) {
+            if (window.crypto?.subtle) {
+                const data = new TextEncoder().encode(password);
+                const hash = await crypto.subtle.digest('SHA-256', data);
+                return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+            }
+            return btoa(unescape(encodeURIComponent(password)));
+        }
+
+        async function submitAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('saved-email').value.trim().toLowerCase();
+            const password = document.getElementById('saved-password').value;
+            if (!email || !password) return;
+
+            const existing = getStoredAccount();
+            if (authMode === 'create') {
+                if (existing && existing.email === email) { showToast('📧 An account with this email already exists'); return; }
+                const confirm = document.getElementById('saved-password-confirm').value;
+                if (password.length < 6) { showToast('🔐 Password must be at least 6 characters'); return; }
+                if (password !== confirm) { showToast('🔐 Passwords do not match'); return; }
+                const account = {
+                    name: document.getElementById('saved-name').value.trim(),
+                    email,
+                    phone: document.getElementById('saved-phone').value.trim(),
+                    address: document.getElementById('saved-address').value.trim(),
+                    passwordHash: await hashPassword(password),
+                    createdAt: Date.now()
+                };
+                localStorage.setItem('cozy_account', JSON.stringify(account));
+                localStorage.setItem('cozy_customer_profile', JSON.stringify(account));
+                loadCustomerProfile();
+                showSignedInAccount(account);
+                showToast('🎉 Account created');
+                return;
+            }
+
+            if (!existing || existing.email !== email) { showToast('📧 No account found with that email'); return; }
+            if ((await hashPassword(password)) !== existing.passwordHash) { showToast('🔐 Incorrect password'); return; }
+            localStorage.setItem('cozy_customer_profile', JSON.stringify(existing));
+            loadCustomerProfile();
+            showSignedInAccount(existing);
+            showToast('👋 Welcome back!');
+        }
+
+        function showSignedInAccount(account) {
+            const form = document.getElementById('auth-form');
+            const panel = document.getElementById('signed-in-panel');
+            form.style.display = 'none';
+            panel.style.display = 'block';
+            document.getElementById('signed-user-name').textContent = `Hello, ${account.name || 'Customer'}!`;
+            document.getElementById('signed-user-email').textContent = account.email || '';
+            document.getElementById('account-info-list').innerHTML = `
+                <div><small>Name</small><strong>${escapeHtml(account.name || '')}</strong></div>
+                <div><small>Mobile</small><strong>${escapeHtml(account.phone || '')}</strong></div>
+                <div><small>Delivery address</small><strong>${escapeHtml(account.address || '')}</strong></div>`;
+            const profileBtn = document.getElementById('user-profile-btn');
+            if (profileBtn) profileBtn.innerHTML = `<span>👤</span> ${escapeHtml((account.name || 'Account').split(' ')[0])}`;
+        }
+
+        function signOut() {
+            localStorage.removeItem('cozy_account');
+            setAuthMode('signin');
+            document.getElementById('saved-email').value = '';
+            document.getElementById('saved-password').value = '';
+            showToast('Signed out');
+        }
 
         function saveCustomerProfile(e) {
             e.preventDefault();
-            const profile = {
-                name: document.getElementById('saved-name').value,
-                phone: document.getElementById('saved-phone').value,
-                address: document.getElementById('saved-address').value
-            };
-            localStorage.setItem('cozy_customer_profile', JSON.stringify(profile));
-            loadCustomerProfile();
-            closeAuthModal();
-            showToast("Profile saved!");
+            // Kept for compatibility with older buttons/code.
+            setAuthMode('create');
+            submitAuth(e);
         }
 
         function loadCustomerProfile() {
             const savedData = localStorage.getItem('cozy_customer_profile');
-            if (savedData) {
+            if (!savedData) return;
+            try {
                 const profile = JSON.parse(savedData);
-                document.getElementById('cust-name').value = profile.name;
-                document.getElementById('cust-phone').value = profile.phone;
-                document.getElementById('cust-address').value = profile.address;
-
-                document.getElementById('saved-name').value = profile.name;
-                document.getElementById('saved-phone').value = profile.phone;
-                document.getElementById('saved-address').value = profile.address;
-
-                document.getElementById('user-profile-btn').innerHTML = `<span>👤</span> ${profile.name.split(' ')[0]}`;
-            }
+                const set = (id,val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
+                set('cust-name', profile.name); set('cust-email', profile.email); set('cust-phone', profile.phone); set('cust-address', profile.address);
+                set('saved-name', profile.name); set('saved-email', profile.email); set('saved-phone', profile.phone); set('saved-address', profile.address);
+                const profileBtn = document.getElementById('user-profile-btn');
+                if (profileBtn && profile.name) profileBtn.innerHTML = `<span>👤</span> ${escapeHtml(profile.name.split(' ')[0])}`;
+            } catch(e) { localStorage.removeItem('cozy_customer_profile'); }
         }
 
         function togglePaymentMethod(method) {
@@ -2478,10 +2619,11 @@
             submitBtn.disabled = true;
 
             const name = document.getElementById('cust-name').value;
+            const email = document.getElementById('cust-email').value;
             const phone = document.getElementById('cust-phone').value;
             const address = document.getElementById('cust-address').value;
 
-            localStorage.setItem('cozy_customer_profile', JSON.stringify({ name, phone, address }));
+            localStorage.setItem('cozy_customer_profile', JSON.stringify({ name, email, phone, address }));
             loadCustomerProfile();
 
             const orderItemsFormatted = cart.map(i => `${i.name} x${i.qty} (${i.price * i.qty} EGP)`).join(', ');
@@ -2489,6 +2631,7 @@
 
             const templateParams = {
                 customer_name: name,
+                customer_email: email,
                 customer_phone: phone,
                 customer_address: address,
                 order_details: orderItemsFormatted,
