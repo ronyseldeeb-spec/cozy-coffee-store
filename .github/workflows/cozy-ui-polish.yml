@@ -1,0 +1,108 @@
+name: Polish Cozy Brews UI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add premium navigation and UX polish
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<!-- COZY-POLISH-V2 -->'
+          if marker in s:
+              print('Polish already installed')
+              raise SystemExit(0)
+
+          css = r'''
+          <style id="cozy-polish-css">
+          /* COZY-POLISH-V2 */
+          .cozy-hamburger{width:44px;height:44px;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.1);backdrop-filter:blur(14px);display:grid;place-items:center;cursor:pointer;transition:.25s;flex:none;box-shadow:0 8px 25px rgba(0,0,0,.12)}
+          .cozy-hamburger:hover{transform:translateY(-2px);background:rgba(255,255,255,.16)}
+          .cozy-hamburger span,.cozy-hamburger span:before,.cozy-hamburger span:after{content:"";display:block;width:18px;height:2px;background:currentColor;border-radius:99px;position:relative;transition:.25s}
+          .cozy-hamburger span:before{position:absolute;top:-6px}.cozy-hamburger span:after{position:absolute;top:6px}
+          .cozy-hamburger.is-open span{background:transparent}.cozy-hamburger.is-open span:before{transform:rotate(45deg);top:0}.cozy-hamburger.is-open span:after{transform:rotate(-45deg);top:0}
+          .cozy-drawer-backdrop{position:fixed;inset:0;background:rgba(12,7,4,.46);backdrop-filter:blur(5px);z-index:9998;opacity:0;pointer-events:none;transition:.28s}
+          .cozy-drawer-backdrop.open{opacity:1;pointer-events:auto}
+          .cozy-drawer{position:fixed;top:12px;bottom:12px;left:12px;width:min(360px,calc(100vw - 24px));z-index:9999;background:rgba(252,248,242,.96);color:#21150f;border:1px solid rgba(55,30,18,.12);border-radius:28px;box-shadow:0 30px 90px rgba(0,0,0,.3);transform:translateX(calc(-100% - 30px));transition:.34s cubic-bezier(.2,.8,.2,1);padding:22px;display:flex;flex-direction:column;overflow:auto}
+          .cozy-drawer.open{transform:translateX(0)}
+          .cozy-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}.cozy-drawer-brand{font:700 1.35rem 'Playfair Display',serif}.cozy-close{width:40px;height:40px;border-radius:12px;border:0;background:#21150f;color:white;font-size:20px;cursor:pointer}
+          .cozy-drawer-nav{display:grid;gap:10px}.cozy-drawer-nav button{border:0;background:#fff;border:1px solid rgba(55,30,18,.08);border-radius:17px;padding:16px;text-align:left;font:700 1rem 'DM Sans',sans-serif;color:#21150f;cursor:pointer;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(50,30,20,.05);transition:.2s}.cozy-drawer-nav button:hover{transform:translateX(4px);background:#f7eee5}.cozy-drawer-nav .ico{width:28px;text-align:center;font-size:1.15rem}
+          .cozy-drawer-foot{margin-top:auto;padding-top:24px;color:#806f63;font-size:.85rem;line-height:1.6}.cozy-drawer-wa{display:inline-flex;margin-top:10px;padding:11px 14px;border-radius:12px;background:#21150f;color:#fff;text-decoration:none;font-weight:700}
+          .cozy-home-enhance{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px auto 0;max-width:760px;width:100%}.cozy-feature{padding:16px;border-radius:20px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);color:#fff;box-shadow:0 12px 35px rgba(0,0,0,.12)}.cozy-feature b{display:block;font-size:.95rem;margin-bottom:5px}.cozy-feature span{font-size:.78rem;color:rgba(255,247,239,.72)}
+          .cozy-scroll-top{position:fixed;right:18px;bottom:18px;width:45px;height:45px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:#21150f;color:#fff;z-index:500;opacity:0;pointer-events:none;transform:translateY(10px);transition:.25s;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.2)}.cozy-scroll-top.show{opacity:1;pointer-events:auto;transform:none}
+          .cozy-live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#79c267;box-shadow:0 0 0 5px rgba(121,194,103,.13);margin-right:8px}
+          @media(max-width:650px){.cozy-home-enhance{grid-template-columns:1fr;margin-top:18px}.cozy-feature{padding:13px 15px}.cozy-drawer{border-radius:24px}.cozy-hamburger{width:42px;height:42px}}
+          </style>
+          '''
+
+          html = r'''
+          <div id="cozy-polish-backdrop" class="cozy-drawer-backdrop"></div>
+          <aside id="cozy-polish-drawer" class="cozy-drawer" aria-hidden="true">
+            <div class="cozy-drawer-head"><div class="cozy-drawer-brand">Cozy Brews</div><button class="cozy-close" id="cozyClose" aria-label="Close menu">×</button></div>
+            <div class="cozy-drawer-nav">
+              <button data-cozy-action="home"><span class="ico">⌂</span>Home</button>
+              <button data-cozy-action="menu"><span class="ico">☕</span>Menu</button>
+              <button data-cozy-action="reviews"><span class="ico">★</span>Reviews</button>
+              <button data-cozy-action="account"><span class="ico">♙</span>Account</button>
+              <button data-cozy-action="cart"><span class="ico">🛒</span>Your Cart</button>
+              <button data-cozy-action="contact"><span class="ico">✦</span>Contact Us</button>
+            </div>
+            <div class="cozy-drawer-foot"><span class="cozy-live-dot"></span>Made for slow mornings, good coffee & warm conversations.<br><a class="cozy-drawer-wa" href="https://wa.me/201068531145" target="_blank" rel="noopener">WhatsApp us</a></div>
+          </aside>
+          <button id="cozyScrollTop" class="cozy-scroll-top" aria-label="Back to top">↑</button>
+          '''
+
+          js = r'''
+          <script id="cozy-polish-js">
+          /* COZY-POLISH-V2 */
+          (()=>{
+            const body=document.body;
+            body.insertAdjacentHTML('afterbegin', `
+              <button id="cozyHamburger" class="cozy-hamburger" aria-label="Open navigation" aria-expanded="false"><span></span></button>
+            `);
+            const ham=document.getElementById('cozyHamburger');
+            const drawer=document.getElementById('cozy-polish-drawer');
+            const back=document.getElementById('cozy-polish-backdrop');
+            const close=document.getElementById('cozyClose');
+            const top=document.getElementById('cozyScrollTop');
+            const open=()=>{ham.classList.add('is-open');ham.setAttribute('aria-expanded','true');drawer.classList.add('open');back.classList.add('open');drawer.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'};
+            const shut=()=>{ham.classList.remove('is-open');ham.setAttribute('aria-expanded','false');drawer.classList.remove('open');back.classList.remove('open');drawer.setAttribute('aria-hidden','true');document.body.style.overflow=''};
+            ham.addEventListener('click',open);close.addEventListener('click',shut);back.addEventListener('click',shut);document.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
+            const clickByText=(texts)=>{const els=[...document.querySelectorAll('button,a')];const el=els.find(x=>texts.some(t=>(x.textContent||'').trim().toLowerCase().includes(t)));if(el){shut();el.click();return true}return false};
+            document.querySelectorAll('[data-cozy-action]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.cozyAction;if(a==='home'){shut();window.scrollTo({top:0,behavior:'smooth'})}else if(a==='menu')clickByText(['menu']);else if(a==='reviews')clickByText(['reviews']);else if(a==='account')clickByText(['account']);else if(a==='cart')clickByText(['cart']);else if(a==='contact'){shut();document.querySelector('.contact')?.scrollIntoView({behavior:'smooth',block:'center'})}}));
+            window.addEventListener('scroll',()=>top.classList.toggle('show',window.scrollY>450),{passive:true});top.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+            const host=document.querySelector('.home-content');
+            if(host&&!document.querySelector('.cozy-home-enhance')){const x=document.createElement('div');x.className='cozy-home-enhance';x.innerHTML='<div class="cozy-feature"><b>☕ Crafted with care</b><span>Comforting coffee, made to feel like home.</span></div><div class="cozy-feature"><b>🥐 Fresh bakery</b><span>Sweet and savory favorites for every mood.</span></div><div class="cozy-feature"><b>✨ Your cozy corner</b><span>Easy ordering, simple navigation, zero clutter.</span></div>';host.appendChild(x)}
+          })();
+          </script>
+          '''
+
+          # Put the CSS before </head>, drawer markup before </body>, and JS just before </body>.
+          s = s.replace('</head>', css + '\n</head>', 1)
+          s = s.replace('<body>', '<body>\n' + html, 1)
+          s = s.replace('</body>', js + '\n</body>', 1)
+          s = s.replace('</html>', marker + '\n</html>', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit polished site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Add premium hamburger navigation and UX polish"
+          git push
