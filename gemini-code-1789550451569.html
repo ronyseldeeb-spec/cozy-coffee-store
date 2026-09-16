@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozy Brews & Bakery</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #FAF6F0;
+            --card-bg: #FFFFFF;
+            --primary-dark: #2C1810;
+            --accent-warm: #C87D55;
+            --accent-gold: #D4A373;
+            --text-main: #3D2314;
+            --text-muted: #7A685D;
+            --shadow-soft: 0 10px 30px rgba(44, 24, 16, 0.06);
+            --shadow-hover: 0 15px 35px rgba(44, 24, 16, 0.12);
+            --radius-lg: 20px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(200, 125, 85, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(200, 125, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(200, 125, 85, 0); }
+        }
+
+        .animated-fade {
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* --- Header / Nav --- */
+        header {
+            background: rgba(250, 246, 240, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212, 163, 115, 0.2);
+            padding: 1.2rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-warm);
+        }
+
+        .cart-btn {
+            background: var(--primary-dark);
+            color: #fff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .cart-btn:hover {
+            background: var(--accent-warm);
+            transform: scale(1.03);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding: 4rem 8% 2.5rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(212, 163, 115, 0.15) 0%, rgba(250, 246, 240, 0) 100%);
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* --- Filter Tabs --- */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            background: transparent;
+            border: 2px solid var(--accent-gold);
+            padding: 0.6rem 1.4rem;
+            border-radius: 25px;
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--accent-gold);
+            color: #fff;
+        }
+
+        /* --- Product Grid --- */
+        .container {
+            padding: 0 8% 4rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.2rem;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .image-container {
+            width: 100%;
+            height: 190px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            position: relative;
+            background: #f4eee8;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-thumbs {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 4px;
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .thumb.active {
+            border-color: var(--accent-warm);
+        }
+
+        .badge-can {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-dark);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .product-info {
+            margin-top: 1rem;
+        }
+
+        .product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .product-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .product-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-warm);
+        }
+
+        .add-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--accent-warm);
+            color: var(--accent-warm);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: var(--accent-warm);
+            color: #fff;
+        }
+
+        /* --- Unified Single-Box Checkout Section --- */
+        .checkout-container {
+            max-width: 650px;
+            margin: 2rem auto 4rem;
+        }
+
+        .single-checkout-box {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(212, 163, 115, 0.3);
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .checkout-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary-dark);
+        }
+
+        .checkout-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .cart-summary-box {
+            background: var(--bg-color);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .summary-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px dashed #E0D6CD;
+            font-size: 0.92rem;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            padding-top: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.85rem;
+            border: 1px solid #E0D6CD;
+            border-radius: var(--radius-sm);
+            background: #FAF8F5;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--accent-warm);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--accent-warm);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            animation: pulseGlow 2s infinite;
+            margin-top: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* --- Toast Notification --- */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-dark);
+            color: #fff;
+            padding: 1rem 1.8rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        /* --- Delivery Banner --- */
+        .delivery-banner {
+            display: none;
+            background: linear-gradient(135deg, #2C1810, #3D2314);
+            color: #FAF6F0;
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-hover);
+            margin: 2rem auto;
+            max-width: 650px;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .delivery-banner h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-badge {
+            display: inline-block;
+            background: var(--accent-warm);
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 25px;
+            font-weight: 700;
+            margin-top: 1.2rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="animated-fade">
+        <div class="logo">
+            ☕ Cozy Brews
+        </div>
+        <ul class="nav-links">
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#checkout">Checkout</a></li>
+        </ul>
+        <button class="cart-btn" onclick="scrollToCheckout()">
+            🛒 Cart (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero animated-fade">
+        <h1>Fresh Coffee & Warm Croissants</h1>
+        <p>Enjoy handcrafted hot espresso, freshly baked pastries, and our specialty cold drinks sealed in cold cans for maximum freshness.</p>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="container" id="menu">
+        <div class="categories">
+            <button class="cat-btn active" onclick="filterCategory('all')">All Products</button>
+            <button class="cat-btn" onclick="filterCategory('hot')">Hot Drinks</button>
+            <button class="cat-btn" onclick="filterCategory('cold')">Cold Drinks (Canned Colds)</button>
+            <button class="cat-btn" onclick="filterCategory('croissant')">Croissants</button>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+            <!-- Products inserted dynamically via JS -->
+        </div>
+    </section>
+
+    <!-- Checkout Section in a Single Unified Place -->
+    <section class="checkout-container" id="checkout">
+        <div class="delivery-banner" id="delivery-banner">
+            <h2>🎉 Order Placed Successfully!</h2>
+            <p>Thank you for choosing Cozy Brews. Your order is being freshly prepared.</p>
+            <div class="timer-badge">⏱️ Ur order will be delivered in 30 min MAX</div>
+        </div>
+
+        <div class="single-checkout-box" id="checkout-box">
+            <div class="checkout-header">
+                <h2>Complete Your Order</h2>
+                <p>Review your selection and enter your delivery details below</p>
+            </div>
+
+            <!-- Embedded Order Summary -->
+            <div class="cart-summary-box">
+                <h4 style="font-family: 'Playfair Display', serif; margin-bottom: 0.8rem; color: var(--primary-dark);">Order Items</h4>
+                <ul class="summary-list" id="summary-list">
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Your cart is empty. Add items from the menu!</p>
+                </ul>
+                <div class="summary-total">
+                    <span>Total Amount:</span>
+                    <span id="total-price">0 EGP</span>
+                </div>
+            </div>
+
+            <!-- Single Form for Contact & Delivery -->
+            <form id="order-form" onsubmit="handleCheckout(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="cust-name" required placeholder="e.g. Ahmed Hassan">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="cust-phone" required placeholder="e.g. 01012345678">
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea id="cust-address" rows="3" required placeholder="Street address, building no, floor, area..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Place Order Now</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Toast Notification Container -->
+    <div class="toast" id="toast">
+        <span>✨ Item added to your cart!</span>
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // EmailJS Setup
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY");
+        })();
+
+        // Expanded Product List with Prices in EGP
+        const products = [
+            // Hot Drinks
+            {
+                id: 1,
+                name: "Classic Caffe Latte",
+                category: "hot",
+                price: 85,
+                desc: "Rich espresso combined with steamed fresh milk and delicate foam layer.",
+                images: [
+                    "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 2,
+                name: "Foamy Cappuccino",
+                category: "hot",
+                price: 80,
+                desc: "Equal balance of double espresso shot, steamed milk, and rich velvety foam.",
+                images: [
+                    "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 3,
+                name: "Spanish Latte",
+                category: "hot",
+                price: 95,
+                desc: "Creamy espresso drink with condensed milk for a sweet rich flavor.",
+                images: [
+                    "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 4,
+                name: "Belgian Hot Chocolate",
+                category: "hot",
+                price: 90,
+                desc: "Melted premium dark chocolate blended into hot milk with cocoa powder.",
+                images: [
+                    "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 5,
+                name: "Americano Dark Roast",
+                category: "hot",
+                price: 65,
+                desc: "Double shot of rich espresso topped with hot water.",
+                images: [
+                    "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+
+            // Cold Drinks & Canned Cold Coffees
+            {
+                id: 6,
+                name: "Iced Spanish Latte (Can)",
+                category: "cold",
+                price: 105,
+                desc: "Sweet condensed milk and chilled dark espresso sealed fresh in a tin can.",
+                images: [
+                    "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: true
+            },
+            {
+                id: 7,
+                name: "Nitro Cold Brew (Can)",
+                category: "cold",
+                price: 110,
+                desc: "Slowly steeped for 20 hours and nitrogen-infused for ultra-smooth texture in a can.",
+                images: [
+                    "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: true
+            },
+            {
+                id: 8,
+                name: "Iced Caramel Macchiato (Can)",
+                category: "cold",
+                price: 115,
+                desc: "Vanilla milk, cold espresso, and buttery caramel sauce served ice-cold in a can.",
+                images: [
+                    "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: true
+            },
+            {
+                id: 9,
+                name: "Iced Mocha Latte (Can)",
+                category: "cold",
+                price: 110,
+                desc: "Rich cocoa syrup mixed with espresso and cold milk in a sealed can.",
+                images: [
+                    "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: true
+            },
+            {
+                id: 10,
+                name: "Fresh Peach Iced Tea",
+                category: "cold",
+                price: 75,
+                desc: "Brewed black tea infused with natural sweet peach syrup and fresh lemon slices.",
+                images: [
+                    "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+
+            // Croissants & Pastries
+            {
+                id: 11,
+                name: "French Butter Croissant",
+                category: "croissant",
+                price: 55,
+                desc: "Flaky multi-layered golden pastry made with 100% French butter.",
+                images: [
+                    "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 12,
+                name: "Nutella Chocolate Croissant",
+                category: "croissant",
+                price: 75,
+                desc: "Warm flaky croissant generously stuffed with hazelnut Nutella chocolate.",
+                images: [
+                    "https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 13,
+                name: "Toasted Almond Cream Croissant",
+                category: "croissant",
+                price: 80,
+                desc: "Filled with almond frangipane cream and topped with crunchy roasted almond flakes.",
+                images: [
+                    "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 14,
+                name: "Savory Cheese & Herb Croissant",
+                category: "croissant",
+                price: 70,
+                desc: "Baked with melted cheddar and aromatic thyme herbs.",
+                images: [
+                    "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            },
+            {
+                id: 15,
+                name: "Strawberry Jam Croissant",
+                category: "croissant",
+                price: 65,
+                desc: "Filled with sweet organic strawberry jam and dusted with powdered sugar.",
+                images: [
+                    "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
+                ],
+                isCan: false
+            }
+        ];
+
+        let cart = [];
+
+        // Render Products Grid
+        function renderProducts(categoryFilter = 'all') {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filtered = categoryFilter === 'all' 
+                ? products 
+                : products.filter(p => p.category === categoryFilter);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card animated-fade';
+
+                let thumbsHtml = '';
+                if (p.images.length > 1) {
+                    thumbsHtml = `
+                        <div class="gallery-thumbs">
+                            ${p.images.map((img, idx) => `
+                                <img src="${img}" class="thumb ${idx === 0 ? 'active' : ''}" 
+                                     onclick="changeImage(${p.id}, '${img}', this)">
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="image-container">
+                        ${p.isCan ? '<span class="badge-can">Nice Can</span>' : ''}
+                        <img src="${p.images[0]}" id="main-img-${p.id}" class="product-img" alt="${p.name}">
+                        ${thumbsHtml}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${p.name}</h3>
+                        <p class="product-desc">${p.desc}</p>
+                    </div>
+                    <div class="product-bottom">
+                        <span class="price">${p.price} EGP</span>
+                        <button class="add-btn" onclick="addToCart(${p.id})">+ Add Item</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Change Gallery Image
+        function changeImage(productId, newSrc, thumbElem) {
+            const mainImg = document.getElementById(`main-img-${productId}`);
+            mainImg.src = newSrc;
+            
+            const thumbs = thumbElem.parentElement.querySelectorAll('.thumb');
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbElem.classList.add('active');
+        }
+
+        // Filter Categories
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderProducts(cat);
+        }
+
+        // Cart Logic
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existing = cart.find(item => item.id === productId);
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast(`Added ${product.name} to cart!`);
+        }
+
+        function updateCartUI() {
+            const countElem = document.getElementById('cart-count');
+            const summaryList = document.getElementById('summary-list');
+            const totalPriceElem = document.getElementById('total-price');
+
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            countElem.innerText = totalCount;
+            totalPriceElem.innerText = `${totalPrice} EGP`;
+
+            if (cart.length === 0) {
+                summaryList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Your cart is empty. Add items from the menu!</p>`;
+                return;
+            }
+
+            summaryList.innerHTML = cart.map(item => `
+                <li class="summary-item">
+                    <span>${item.name} (x${item.qty})</span>
+                    <span>${item.price * item.qty} EGP</span>
+                </li>
+            `).join('');
+        }
+
+        // Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('span').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function scrollToCheckout() {
+            document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Handle Checkout Submission & Send Email to rony.seldeeb@gmail.com
+        function handleCheckout(e) {
+            e.preventDefault();
+
+            if (cart.length === 0) {
+                showToast("⚠️ Your cart is empty!");
+                return;
+            }
+
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+            
+            const orderItemsFormatted = cart.map(i => `${i.name} x${i.qty} (${i.price * i.qty} EGP)`).join(', ');
+            const totalAmount = document.getElementById('total-price').innerText;
+
+            const templateParams = {
+                to_email: 'rony.seldeeb@gmail.com',
+                customer_name: name,
+                customer_phone: phone,
+                customer_address: address,
+                order_details: orderItemsFormatted,
+                total_price: totalAmount
+            };
+
+            // Non-blocking EmailJS trigger
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(() => console.log('Order notification email sent!'))
+                .catch((err) => console.log('Email notice:', err));
+
+            // Hide the single checkout box and show the delivery banner
+            document.getElementById('checkout-box').style.display = 'none';
+            const deliveryBanner = document.getElementById('delivery-banner');
+            deliveryBanner.style.display = 'block';
+
+            // Reset cart
+            cart = [];
+            updateCartUI();
+        }
+
+        // Initialize Page
+        renderProducts();
+    </script>
+</body>
+</html>
