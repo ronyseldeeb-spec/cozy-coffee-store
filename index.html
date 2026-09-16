@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cozy Brews & Bakery</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         :root {
-            --bg-color: #FAF6F0;
+            --bg-color: #FBF8F3;
             --card-bg: #FFFFFF;
-            --primary-dark: #2C1810;
-            --accent-warm: #C87D55;
+            --primary-dark: #1E120B;
+            --accent-warm: #C06C3B;
+            --accent-soft: #E2A782;
             --accent-gold: #D4A373;
-            --text-main: #3D2314;
-            --text-muted: #7A685D;
-            --shadow-soft: 0 8px 20px rgba(44, 24, 16, 0.05);
-            --shadow-hover: 0 12px 28px rgba(44, 24, 16, 0.1);
-            --radius-lg: 18px;
-            --radius-sm: 12px;
+            --text-main: #2D1A0E;
+            --text-muted: #7A695D;
+            --glass-bg: rgba(255, 253, 250, 0.85);
+            --shadow-soft: 0 10px 25px rgba(44, 24, 16, 0.04);
+            --shadow-hover: 0 15px 35px rgba(44, 24, 16, 0.08);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
         }
 
         * {
@@ -46,133 +49,171 @@
         }
 
         .animated-fade {
-            animation: fadeIn 0.4s ease forwards;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* --- Header --- */
+        /* --- ULTRA MODERN & COZY HEADER --- */
         header {
-            background: rgba(250, 246, 240, 0.96);
-            backdrop-filter: blur(12px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(212, 163, 115, 0.2);
+            border-bottom: 1px solid rgba(212, 163, 115, 0.15);
             padding: 0.8rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.03);
         }
 
         .logo {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--primary-dark);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-badge-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #F4E8DC, #EAD7CB);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
         }
 
         .header-actions {
             display: flex;
             align-items: center;
             gap: 8px;
+            background: rgba(245, 239, 230, 0.6);
+            padding: 4px;
+            border-radius: 35px;
+            border: 1px solid rgba(212, 163, 115, 0.2);
         }
 
-        .order-counter-badge {
-            background: #E8D8C8;
-            color: var(--primary-dark);
-            padding: 0.5rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            border: 1px solid var(--accent-gold);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .user-btn {
+        .nav-btn {
             background: transparent;
-            border: 1px solid var(--primary-dark);
-            color: var(--primary-dark);
-            padding: 0.5rem 0.8rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.82rem;
-        }
-
-        .cart-btn {
-            background: var(--primary-dark);
-            color: #fff;
-            padding: 0.55rem 1rem;
+            color: var(--text-main);
+            padding: 0.5rem 0.95rem;
             border-radius: 30px;
-            cursor: pointer;
-            border: none;
+            font-size: 0.82rem;
             font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            transition: all 0.25s ease;
         }
 
-        /* --- Hero --- */
-        .hero {
-            padding: 2rem 5% 1rem;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(212, 163, 115, 0.12) 0%, rgba(250, 246, 240, 0) 100%);
-        }
-
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            color: var(--primary-dark);
-            margin-bottom: 0.4rem;
-        }
-
-        .hero p {
+        .nav-btn span {
             font-size: 0.95rem;
-            color: var(--text-muted);
-            max-width: 500px;
+        }
+
+        .nav-btn:hover {
+            color: var(--accent-warm);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-btn:active { transform: scale(0.96); }
+
+        .nav-btn.primary-cart {
+            background: var(--primary-dark);
+            color: #FFF;
+            padding: 0.5rem 1.1rem;
+            box-shadow: 0 4px 12px rgba(30, 18, 11, 0.15);
+        }
+
+        .nav-btn.primary-cart:hover {
+            background: var(--accent-warm);
+            color: #FFF;
+        }
+
+        /* --- HERO BANNERS --- */
+        .hero-banner {
+            padding: 2.2rem 5% 1.2rem;
+            text-align: center;
+            background: radial-gradient(circle at top, rgba(226, 167, 130, 0.18) 0%, rgba(251, 248, 243, 0) 70%);
+            border-bottom: 1px dashed rgba(212, 163, 115, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .hero-banner-content {
+            max-width: 600px;
             margin: 0 auto;
         }
 
-        /* --- Horizontal Categories Navigation --- */
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #FFF;
+            border: 1px solid rgba(192, 108, 59, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-warm);
+            margin-bottom: 0.6rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .hero-banner h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.1rem;
+            color: var(--primary-dark);
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+
+        .hero-banner p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Horizontal Categories --- */
         .categories-wrapper {
             padding: 0 5%;
-            margin-top: 1rem;
             margin-bottom: 1.5rem;
         }
 
         .categories {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.6rem;
             overflow-x: auto;
             scroll-behavior: smooth;
             padding: 0.4rem 0;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
 
-        .categories::-webkit-scrollbar {
-            display: none; /* Chrome / Safari */
-        }
+        .categories::-webkit-scrollbar { display: none; }
 
         .cat-btn {
             background: #FFF;
-            border: 1px solid rgba(212, 163, 115, 0.4);
+            border: 1px solid rgba(212, 163, 115, 0.35);
             padding: 0.55rem 1.1rem;
             border-radius: 25px;
             color: var(--text-main);
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .cat-btn.active, .cat-btn:hover {
@@ -181,24 +222,27 @@
             color: #fff;
         }
 
-        /* --- Main Content --- */
+        /* --- Main Layout --- */
         .page-view { display: none; }
         .page-view.active { display: block; }
         .container { padding: 0 5% 3rem; }
 
         .section-header {
-            margin: 1.8rem 0 0.8rem;
-            border-bottom: 1px solid rgba(212, 163, 115, 0.25);
-            padding-bottom: 0.3rem;
+            margin: 1.5rem 0 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(212, 163, 115, 0.2);
+            padding-bottom: 0.4rem;
         }
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             color: var(--primary-dark);
         }
 
-        /* --- Product Grid & Cozy Cards --- */
+        /* --- Product Grid & Cards --- */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -210,19 +254,26 @@
             border-radius: var(--radius-lg);
             padding: 0.9rem;
             box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(212, 163, 115, 0.18);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 1px solid rgba(212, 163, 115, 0.15);
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
         }
 
         .image-container {
             width: 100%;
-            height: 170px;
-            border-radius: var(--radius-sm);
+            height: 165px;
+            border-radius: var(--radius-md);
             overflow: hidden;
             position: relative;
-            background: #f4eee8;
+            background: #F4EEE8;
         }
 
         .product-img {
@@ -242,23 +293,22 @@
             padding: 3px 8px;
             border-radius: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .product-info { margin-top: 0.7rem; }
-        
+
         .product-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--primary-dark);
             margin-bottom: 0.2rem;
         }
 
         .product-desc {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             margin-bottom: 0.7rem;
-            line-height: 1.4;
+            line-height: 1.35;
         }
 
         .product-bottom {
@@ -274,27 +324,57 @@
         }
 
         .add-btn {
-            background: #FAF6F0;
+            background: #FAF4EF;
             border: 1px solid var(--accent-warm);
             color: var(--accent-warm);
-            padding: 0.45rem 1rem;
+            padding: 0.45rem 0.9rem;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        /* --- Checkout Page --- */
+        .add-btn:hover {
+            background: var(--accent-warm);
+            color: #fff;
+        }
+
+        /* --- CHECKOUT --- */
         .checkout-page-container {
-            max-width: 700px;
+            max-width: 680px;
             margin: 1rem auto;
             padding: 0 4%;
+        }
+
+        .checkout-banner {
+            background: linear-gradient(135deg, #2C1810 0%, #3D2314 100%);
+            color: #FAF6F0;
+            padding: 1.4rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .checkout-banner-icon {
+            font-size: 2.2rem;
+            background: rgba(255,255,255,0.1);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .checkout-card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 1.5rem;
+            padding: 1.4rem;
             box-shadow: var(--shadow-soft);
             border: 1px solid rgba(212, 163, 115, 0.2);
         }
@@ -309,7 +389,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
         }
 
         .cart-items-table {
@@ -321,7 +401,7 @@
         .cart-items-table th, .cart-items-table td {
             padding: 0.65rem 0.2rem;
             text-align: left;
-            border-bottom: 1px solid #E0D6CD;
+            border-bottom: 1px solid #EAE1D8;
             font-size: 0.88rem;
         }
 
@@ -354,13 +434,13 @@
             display: block;
             font-weight: 600;
             margin-bottom: 0.25rem;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
         }
 
         .form-group input, .form-group textarea {
             width: 100%;
             padding: 0.7rem;
-            border: 1px solid #E0D6CD;
+            border: 1px solid #E2D7CC;
             border-radius: var(--radius-sm);
             background: #FAF8F5;
             font-size: 0.88rem;
@@ -378,13 +458,15 @@
             font-size: 0.95rem;
             cursor: pointer;
             margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(192, 108, 59, 0.25);
         }
 
-        /* --- Modals & Overlays --- */
+        /* --- MODAL OVERLAYS --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(30, 18, 11, 0.6);
+            backdrop-filter: blur(4px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -397,7 +479,7 @@
             padding: 1.5rem;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 450px;
+            max-width: 460px;
             box-shadow: var(--shadow-hover);
             position: relative;
             max-height: 90vh;
@@ -407,12 +489,95 @@
         .modal-close {
             position: absolute;
             top: 12px; right: 16px;
-            background: none; border: none;
-            font-size: 1.5rem; cursor: pointer; color: var(--text-muted);
+            background: #F4E8DC; border: none;
+            width: 30px; height: 30px; border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer; color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10;
+        }
+
+        /* --- AMAZON-STYLE DETAIL MODAL --- */
+        .product-detail-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+
+        .detail-badge {
+            background: #FAF2EA;
+            color: var(--accent-warm);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 0.4rem;
+        }
+
+        .detail-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-warm);
+            margin-bottom: 1rem;
+        }
+
+        .detail-section-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 0.8rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .detail-specs-grid {
+            background: #FAF8F5;
+            border: 1px solid #E8DDD2;
+            border-radius: var(--radius-sm);
+            padding: 0.8rem;
+            margin: 0.8rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .add-to-order-btn {
+            width: 100%;
+            background: var(--primary-dark);
+            color: #fff;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(30, 18, 11, 0.2);
         }
 
         .live-timer-box {
-            background: linear-gradient(135deg, #2C1810, #3D2314);
+            background: linear-gradient(135deg, #1E120B, #3D2314);
             color: #FAF6F0;
             padding: 1rem;
             border-radius: var(--radius-sm);
@@ -432,12 +597,11 @@
             background: #FAF8F5;
             padding: 0.9rem;
             border-radius: var(--radius-sm);
-            border: 1px solid #E0D6CD;
+            border: 1px solid #E2D7CC;
             font-size: 0.85rem;
             margin-top: 0.8rem;
         }
 
-        /* --- Toast Notification --- */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -455,37 +619,31 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* --- 📱 MOBILE OPTIMIZATIONS (ULTRA COZY) --- */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-                padding: 0.6rem 4%;
+                padding: 0.7rem 4%;
             }
 
-            .logo {
-                justify-content: center;
-                font-size: 1.4rem;
-            }
+            .logo { font-size: 1.25rem; }
+            .logo-badge-icon { width: 32px; height: 32px; font-size: 1rem; }
 
             .header-actions {
-                width: 100%;
-                justify-content: space-between;
                 gap: 4px;
+                padding: 3px;
             }
 
-            .order-counter-badge, .user-btn, .cart-btn {
-                padding: 0.45rem 0.65rem;
-                font-size: 0.78rem;
-                flex: 1;
-                justify-content: center;
+            .nav-btn {
+                padding: 0.4rem 0.65rem;
+                font-size: 0.75rem;
             }
 
-            .hero h1 { font-size: 1.7rem; }
-            .hero p { font-size: 0.85rem; }
+            .nav-btn.primary-cart {
+                padding: 0.4rem 0.8rem;
+            }
 
-            /* Horizontal Card Layout for Mobile */
+            .hero-banner { padding: 1.5rem 4% 1rem; }
+            .hero-banner h1 { font-size: 1.6rem; }
+
             .product-grid {
                 grid-template-columns: 1fr;
                 gap: 0.8rem;
@@ -499,23 +657,16 @@
             }
 
             .image-container {
-                width: 100px;
-                height: 100px;
+                width: 95px;
+                height: 95px;
                 flex-shrink: 0;
             }
 
-            .product-info {
-                margin-top: 0;
-                flex-grow: 1;
-            }
-
-            .product-title {
-                font-size: 0.98rem;
-            }
-
+            .product-info { margin-top: 0; flex-grow: 1; }
+            .product-title { font-size: 0.95rem; }
             .product-desc {
-                font-size: 0.78rem;
-                margin-bottom: 0.4rem;
+                font-size: 0.75rem;
+                margin-bottom: 0.3rem;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
@@ -525,14 +676,14 @@
             .product-bottom {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 6px;
+                gap: 4px;
             }
 
             .add-btn {
                 width: 100%;
                 text-align: center;
-                padding: 0.35rem 0.6rem;
-                font-size: 0.78rem;
+                padding: 0.35rem 0.5rem;
+                font-size: 0.75rem;
             }
 
             .form-grid { grid-template-columns: 1fr; }
@@ -543,42 +694,49 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    <!-- ULTRA MODERN & COZY HEADER -->
     <header class="animated-fade">
         <div class="logo" onclick="switchPage('store')">
-            ☕ Cozy Brews
+            <div class="logo-badge-icon">☕</div> Cozy Brews
         </div>
 
         <div class="header-actions">
-            <button class="order-counter-badge" onclick="openOrdersTrackerModal()">
-                📊 Orders (<span id="store-orders-count">0</span>)
+            <button class="nav-btn" onclick="switchPage('store')">
+                <span>📜</span> Menu
             </button>
 
-            <button class="user-btn" id="user-profile-btn" onclick="openAuthModal()">
-                👤 Sign In
+            <button class="nav-btn" onclick="openOrdersTrackerModal()">
+                <span>📊</span> Orders (<span id="store-orders-count">0</span>)
             </button>
 
-            <button class="cart-btn" onclick="switchPage('checkout')">
-                🛒 Cart (<span id="cart-count">0</span>)
+            <button class="nav-btn" id="user-profile-btn" onclick="openAuthModal()">
+                <span>👤</span> Account
+            </button>
+
+            <button class="nav-btn primary-cart" onclick="switchPage('checkout')">
+                <span>🛍️</span> Cart (<span id="cart-count">0</span>)
             </button>
         </div>
     </header>
 
     <!-- STORE PAGE VIEW -->
     <div id="store-page" class="page-view active animated-fade">
-        <section class="hero">
-            <h1>Handcrafted Coffee & Bakery</h1>
-            <p>Specialty espresso, signature canned cold brews, & fresh artisan sweets.</p>
+        <section class="hero-banner">
+            <div class="hero-banner-content">
+                <div class="hero-pill">✨ Freshly Brewed Daily</div>
+                <h1>Artisan Coffee & Bakery</h1>
+                <p>Handcrafted espresso, canned cold brews, & fresh butter croissants.</p>
+            </div>
         </section>
 
         <div class="categories-wrapper">
             <div class="categories">
-                <button class="cat-btn active" onclick="filterCategory('all')">All Menu</button>
-                <button class="cat-btn" onclick="filterCategory('hot')">Hot Drinks</button>
-                <button class="cat-btn" onclick="filterCategory('cold')">Cold Cans</button>
-                <button class="cat-btn" onclick="filterCategory('croissant')">Croissants</button>
-                <button class="cat-btn" onclick="filterCategory('sandwich')">Sandwiches</button>
-                <button class="cat-btn" onclick="filterCategory('dessert')">Sweets</button>
+                <button class="cat-btn active" onclick="filterCategory('all')"><span>☕</span> All Menu</button>
+                <button class="cat-btn" onclick="filterCategory('hot')"><span>🔥</span> Hot Espresso</button>
+                <button class="cat-btn" onclick="filterCategory('cold')"><span>🥫</span> Canned Cold</button>
+                <button class="cat-btn" onclick="filterCategory('croissant')"><span>🥐</span> Croissants</button>
+                <button class="cat-btn" onclick="filterCategory('sandwich')"><span>🥪</span> Sandwiches</button>
+                <button class="cat-btn" onclick="filterCategory('dessert')"><span>🍰</span> Sweets</button>
             </div>
         </div>
 
@@ -594,10 +752,15 @@
                 ← Back to Store Menu
             </button>
 
-            <div class="checkout-card" id="checkout-card">
-                <h2 style="font-family: 'Playfair Display', serif; color: var(--primary-dark);">Review Order</h2>
-                <p style="color: var(--text-muted); font-size: 0.82rem;">Confirm your items & delivery info.</p>
+            <div class="checkout-banner">
+                <div class="checkout-banner-icon">🛍️</div>
+                <div>
+                    <h2 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Checkout & Delivery</h2>
+                    <p style="font-size: 0.82rem; opacity: 0.85;">Review your order items & confirm delivery address.</p>
+                </div>
+            </div>
 
+            <div class="checkout-card">
                 <table class="cart-items-table">
                     <thead>
                         <tr>
@@ -614,7 +777,7 @@
                     <span id="total-price">0 EGP</span>
                 </div>
 
-                <hr style="border: 0; border-top: 1px solid #E0D6CD; margin: 0.8rem 0;">
+                <hr style="border: 0; border-top: 1px solid #E2D7CC; margin: 0.8rem 0;">
 
                 <form id="order-form" onsubmit="handleCheckout(event)">
                     <h3 style="font-family: 'Playfair Display', serif; color: var(--primary-dark); margin-bottom: 0.6rem; font-size: 1.1rem;">Delivery Details</h3>
@@ -639,12 +802,19 @@
         </div>
     </div>
 
+    <!-- AMAZON-STYLE PRODUCT DETAIL MODAL -->
+    <div class="modal-overlay" id="product-detail-modal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeProductDetailModal()">&times;</button>
+            <div id="product-detail-content"></div>
+        </div>
+    </div>
+
     <!-- ORDERS TRACKER MODAL -->
     <div class="modal-overlay" id="orders-tracker-modal">
         <div class="modal-card">
             <button class="modal-close" onclick="closeOrdersTrackerModal()">&times;</button>
             <h2 style="font-family: 'Playfair Display', serif; color: var(--primary-dark); font-size: 1.3rem;">📊 Live Order Status</h2>
-            
             <div id="active-order-container"></div>
         </div>
     </div>
@@ -682,26 +852,120 @@
             emailjs.init("5cJi2AW6yCpd6RHAa");
         })();
 
+        // CLEAR PREVIOUS LOCALSTORAGE DATA TO ENSURE ZERO COUNTER
+        localStorage.removeItem('cozy_total_orders');
+        localStorage.removeItem('cozy_active_order');
+
         const catalog = [
-            { id: 1, name: "Classic Caffe Latte", category: "hot", price: 85, desc: "Double espresso shot combined with steamed fresh milk.", images: ["https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 2, name: "Spanish Hot Latte", category: "hot", price: 95, desc: "Rich espresso blend sweetened with creamy condensed milk.", images: ["https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 3, name: "Foamy Cappuccino", category: "hot", price: 80, desc: "Balanced espresso with equal parts rich steamed milk and dense foam.", images: ["https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 4, name: "Belgian Hot Chocolate", category: "hot", price: 90, desc: "Rich melted dark chocolate whisked with hot whole milk.", images: ["https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 5, name: "Iced Spanish Latte (Can)", category: "cold", price: 105, desc: "Cold condensed milk and dark espresso sealed in our signature tin can.", images: ["https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"], isCan: true },
-            { id: 6, name: "Nitro Cold Brew Coffee (Can)", category: "cold", price: 110, desc: "20-hour cold steeped coffee infused with nitrogen for silky creaminess.", images: ["https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"], isCan: true },
-            { id: 7, name: "Iced Caramel Macchiato (Can)", category: "cold", price: 115, desc: "Cold espresso layered over sweet vanilla milk and caramel drizzle.", images: ["https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"], isCan: true },
-            { id: 8, name: "Iced Mocha Latte (Can)", category: "cold", price: 110, desc: "Chilled espresso mixed with Belgian cocoa syrup and milk.", images: ["https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"], isCan: true },
-            { id: 9, name: "French Pure Butter Croissant", category: "croissant", price: 55, desc: "Golden multi-layered crisp pastry baked daily with premium French butter.", images: ["https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 10, name: "Nutella Chocolate Croissant", category: "croissant", price: 75, desc: "Flaky croissant filled with rich, warm Nutella hazelnut chocolate cream.", images: ["https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 11, name: "Toasted Almond Cream Croissant", category: "croissant", price: 80, desc: "Stuffed with sweet almond frangipane cream and sliced almonds.", images: ["https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 12, name: "Smoked Turkey & Cheddar Croissant", category: "sandwich", price: 120, desc: "Fresh croissant filled with smoked turkey breast and melted cheddar.", images: ["https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 13, name: "Classic Caprese Ciabatta", category: "sandwich", price: 110, desc: "Toasted ciabatta stuffed with fresh mozzarella, tomatoes, and pesto.", images: ["https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 14, name: "Salted Caramel Cheesecake", category: "dessert", price: 95, desc: "Creamy cheesecake topped with rich homemade salted caramel sauce.", images: ["https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80"], isCan: false },
-            { id: 15, name: "Warm Chocolate Fudgy Brownie", category: "dessert", price: 70, desc: "Decadent dark chocolate brownie served warm with walnuts.", images: ["https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80"], isCan: false }
+            { 
+                id: 1, name: "Classic Caffe Latte", category: "hot", price: 85, 
+                desc: "Double espresso shot combined with steamed fresh milk.",
+                ingredients: "Fresh Whole Milk, Specialty Arabica Espresso Beans.",
+                calories: "180 kcal", size: "350 ml",
+                images: ["https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 2, name: "Spanish Hot Latte", category: "hot", price: 95, 
+                desc: "Rich espresso blend sweetened with creamy condensed milk.",
+                ingredients: "Espresso, Sweetened Condensed Milk, Whole Milk.",
+                calories: "260 kcal", size: "350 ml",
+                images: ["https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 3, name: "Foamy Cappuccino", category: "hot", price: 80, 
+                desc: "Balanced espresso with equal parts rich steamed milk and dense foam.",
+                ingredients: "Arabica Blend Espresso, Aerated Whole Milk Foam.",
+                calories: "140 kcal", size: "300 ml",
+                images: ["https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 4, name: "Belgian Hot Chocolate", category: "hot", price: 90, 
+                desc: "Rich melted dark chocolate whisked with hot whole milk.",
+                ingredients: "Pure Belgian Dark Chocolate (70%), Whole Milk, Cocoa Powder.",
+                calories: "320 kcal", size: "350 ml",
+                images: ["https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 5, name: "Iced Spanish Latte (Can)", category: "cold", price: 105, 
+                desc: "Cold condensed milk and dark espresso sealed in our signature tin can.",
+                ingredients: "Signature Cold Brew Espresso, Sweet Condensed Milk, Chilled Milk.",
+                calories: "270 kcal", size: "330 ml Tin Can",
+                images: ["https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"], isCan: true 
+            },
+            { 
+                id: 6, name: "Nitro Cold Brew Coffee (Can)", category: "cold", price: 110, 
+                desc: "20-hour cold steeped coffee infused with nitrogen for silky creaminess.",
+                ingredients: "100% Single-Origin Cold Steeped Arabica Beans, Nitrogen Gas.",
+                calories: "5 kcal", size: "330 ml Tin Can",
+                images: ["https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"], isCan: true 
+            },
+            { 
+                id: 7, name: "Iced Caramel Macchiato (Can)", category: "cold", price: 115, 
+                desc: "Cold espresso layered over sweet vanilla milk and caramel drizzle.",
+                ingredients: "Espresso, Artisan Caramel Sauce, Vanilla Syrup, Cold Milk.",
+                calories: "280 kcal", size: "330 ml Tin Can",
+                images: ["https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"], isCan: true 
+            },
+            { 
+                id: 8, name: "Iced Mocha Latte (Can)", category: "cold", price: 110, 
+                desc: "Chilled espresso mixed with Belgian cocoa syrup and milk.",
+                ingredients: "Espresso Shot, Belgian Dark Cocoa Syrup, Milk.",
+                calories: "240 kcal", size: "330 ml Tin Can",
+                images: ["https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"], isCan: true 
+            },
+            { 
+                id: 9, name: "French Pure Butter Croissant", category: "croissant", price: 55, 
+                desc: "Golden multi-layered crisp pastry baked daily with premium French butter.",
+                ingredients: "French Normandy Butter, Enriched Wheat Flour, Yeast, Sugar, Sea Salt.",
+                calories: "310 kcal", size: "1 Large Piece (110g)",
+                images: ["https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 10, name: "Nutella Chocolate Croissant", category: "croissant", price: 75, 
+                desc: "Flaky croissant filled with rich, warm Nutella hazelnut chocolate cream.",
+                ingredients: "Pure Butter Croissant Dough, Nutella Hazelnut Spread, Cocoa Drizzle.",
+                calories: "420 kcal", size: "1 Piece (130g)",
+                images: ["https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 11, name: "Toasted Almond Cream Croissant", category: "croissant", price: 80, 
+                desc: "Stuffed with sweet almond frangipane cream and sliced almonds.",
+                ingredients: "Almond Frangipane Paste, Toasted Almond Flakes, Butter Croissant.",
+                calories: "450 kcal", size: "1 Piece (140g)",
+                images: ["https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 12, name: "Smoked Turkey & Cheddar Croissant", category: "sandwich", price: 120, 
+                desc: "Fresh croissant filled with smoked turkey breast and melted cheddar.",
+                ingredients: "Premium Smoked Turkey Breast, Aged Sharp Cheddar, Butter Croissant, Honey Mustard.",
+                calories: "480 kcal", size: "1 Sandwich",
+                images: ["https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 13, name: "Classic Caprese Ciabatta", category: "sandwich", price: 110, 
+                desc: "Toasted ciabatta stuffed with fresh mozzarella, tomatoes, and pesto.",
+                ingredients: "Fresh Buffalo Mozzarella, Heirloom Tomatoes, Homemade Basil Pesto, Artisan Ciabatta.",
+                calories: "410 kcal", size: "1 Sandwich",
+                images: ["https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 14, name: "Salted Caramel Cheesecake", category: "dessert", price: 95, 
+                desc: "Creamy cheesecake topped with rich homemade salted caramel sauce.",
+                ingredients: "Cream Cheese, Graham Cracker Crust, Homemade Butter Caramel, Sea Salt.",
+                calories: "490 kcal", size: "1 Slice",
+                images: ["https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            },
+            { 
+                id: 15, name: "Warm Chocolate Fudgy Brownie", category: "dessert", price: 70, 
+                desc: "Decadent dark chocolate brownie served warm with walnuts.",
+                ingredients: "Belgian Dark Chocolate, Dutch Cocoa, Butter, Chopped Walnuts.",
+                calories: "380 kcal", size: "1 Piece",
+                images: ["https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80"], isCan: false 
+            }
         ];
 
         let cart = [];
-        let totalOrdersCount = parseInt(localStorage.getItem('cozy_total_orders') || '0');
+        let totalOrdersCount = 0; // STRICT ZERO DEFAULT
         let timerInterval = null;
 
         const categoryTitles = {
@@ -715,7 +979,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateOrdersCounterDisplay();
             loadCustomerProfile();
-            startTimerIfActive();
+            renderMenu();
         });
 
         function updateOrdersCounterDisplay() {
@@ -752,7 +1016,7 @@
                     </div>
                     <div class="product-grid">
                         ${items.map(p => `
-                            <div class="product-card">
+                            <div class="product-card" onclick="openProductDetailModal(${p.id})">
                                 <div class="image-container">
                                     ${p.isCan ? '<span class="badge-can">Nice Can</span>' : ''}
                                     <img src="${p.images[0]}" class="product-img" alt="${p.name}">
@@ -762,7 +1026,7 @@
                                     <p class="product-desc">${p.desc}</p>
                                     <div class="product-bottom">
                                         <span class="price">${p.price} EGP</span>
-                                        <button class="add-btn" onclick="addToCart(${p.id})">+ Add Item</button>
+                                        <button class="add-btn" onclick="event.stopPropagation(); addToCart(${p.id})">+ Add Item</button>
                                     </div>
                                 </div>
                             </div>
@@ -777,6 +1041,40 @@
             document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             renderMenu(cat);
+        }
+
+        function openProductDetailModal(productId) {
+            const p = catalog.find(item => item.id === productId);
+            if (!p) return;
+
+            const modalContent = document.getElementById('product-detail-content');
+            modalContent.innerHTML = `
+                <img src="${p.images[0]}" class="product-detail-img" alt="${p.name}">
+                <span class="detail-badge">${categoryTitles[p.category]}</span>
+                <h2 class="detail-title">${p.name}</h2>
+                <div class="detail-price">${p.price} EGP</div>
+
+                <div class="detail-section-title">Description</div>
+                <p class="detail-text">${p.desc}</p>
+
+                <div class="detail-section-title">Ingredients & Quality</div>
+                <p class="detail-text">${p.ingredients}</p>
+
+                <div class="detail-specs-grid">
+                    <div><strong>Calories:</strong> ${p.calories}</div>
+                    <div><strong>Serving Size:</strong> ${p.size}</div>
+                </div>
+
+                <button class="add-to-order-btn" onclick="addToCart(${p.id}); closeProductDetailModal();">
+                    🛒 Add to your order (${p.price} EGP)
+                </button>
+            `;
+
+            document.getElementById('product-detail-modal').style.display = 'flex';
+        }
+
+        function closeProductDetailModal() {
+            document.getElementById('product-detail-modal').style.display = 'none';
         }
 
         function addToCart(productId) {
@@ -872,7 +1170,7 @@
                 document.getElementById('saved-phone').value = profile.phone;
                 document.getElementById('saved-address').value = profile.address;
 
-                document.getElementById('user-profile-btn').innerText = `👤 ${profile.name.split(' ')[0]}`;
+                document.getElementById('user-profile-btn').innerHTML = `<span>👤</span> ${profile.name.split(' ')[0]}`;
             }
         }
 
@@ -891,7 +1189,7 @@
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
             const address = document.getElementById('cust-address').value;
-            
+
             localStorage.setItem('cozy_customer_profile', JSON.stringify({ name, phone, address }));
             loadCustomerProfile();
 
@@ -909,7 +1207,6 @@
             emailjs.send('service_7bbe3hl', 'template_v1jh9xd', templateParams)
                 .then(() => {
                     totalOrdersCount++;
-                    localStorage.setItem('cozy_total_orders', totalOrdersCount.toString());
                     updateOrdersCounterDisplay();
 
                     const orderData = {
@@ -978,12 +1275,12 @@
                 </div>
 
                 <div class="order-details-box">
-                    <h4 style="color: var(--primary-dark); margin-bottom: 0.4rem; border-bottom: 1px solid #E0D6CD; padding-bottom: 0.2rem;">📦 Details:</h4>
+                    <h4 style="color: var(--primary-dark); margin-bottom: 0.4rem; border-bottom: 1px solid #E2D7CC; padding-bottom: 0.2rem;">📦 Details:</h4>
                     <p><strong>Name:</strong> ${order.customer_name}</p>
                     <p><strong>Address:</strong> ${order.delivery_address}</p>
-                    <hr style="border:0; border-top:1px dashed #E0D6CD; margin: 0.5rem 0;">
+                    <hr style="border:0; border-top:1px dashed #E2D7CC; margin: 0.5rem 0;">
                     ${itemsListHtml}
-                    <hr style="border:0; border-top:1px solid #E0D6CD; margin: 0.5rem 0;">
+                    <hr style="border:0; border-top:1px solid #E2D7CC; margin: 0.5rem 0;">
                     <div style="display:flex; justify-content:space-between; font-weight:700; color: var(--primary-dark);">
                         <span>Total Paid:</span>
                         <span>${order.total_price}</span>
@@ -1023,7 +1320,6 @@
                 
                 localStorage.removeItem('cozy_active_order');
                 totalOrdersCount = 0;
-                localStorage.setItem('cozy_total_orders', '0');
                 updateOrdersCounterDisplay();
 
                 const container = document.getElementById('active-order-container');
@@ -1050,8 +1346,6 @@
 
             return true;
         }
-
-        renderMenu();
     </script>
 </body>
 </html>
