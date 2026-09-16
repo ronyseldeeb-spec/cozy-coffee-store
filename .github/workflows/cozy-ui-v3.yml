@@ -1,0 +1,84 @@
+name: Cozy UI V3
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply UI V3
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<!-- COZY-UI-V3 -->'
+          if marker in s:
+              print('V3 already installed')
+              raise SystemExit(0)
+
+          css = '''
+          <style id="cozy-ui-v3-css">
+          /* COZY-UI-V3 */
+          #cozyHamburger{position:fixed!important;left:18px!important;top:18px!important;z-index:10001!important;color:#fff!important}
+          @media(max-width:700px){#cozyHamburger{left:12px!important;top:12px!important;width:42px!important;height:42px!important}}
+          #home .brand{padding-left:58px}
+          .cozy-hamburger{box-shadow:0 12px 30px rgba(0,0,0,.24)!important}
+          .cozy-drawer-nav button{min-height:58px}
+          .cozy-drawer-nav button:hover{box-shadow:0 12px 30px rgba(50,30,20,.08)}
+          .card .photo{position:relative}
+          .card .photo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(30,18,11,.08));pointer-events:none}
+          .card .photo img{transition:transform .45s ease}
+          .card:hover .photo img{transform:scale(1.045)}
+          </style>
+          '''
+
+          js = '''
+          <script id="cozy-ui-v3-js">
+          (()=>{
+            const photos = [
+              'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1511081692775-05d0f180a065?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1512568400610-62da28bc8a13?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1497935586351-b67a5e012e9d?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1481391032119-d89fee407e44?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1555507036-ab1c4077c18a?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=900&q=82',
+              'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=900&q=82'
+            ];
+            const setPhotos=()=>{
+              const imgs=[...document.querySelectorAll('.card .photo img')];
+              imgs.forEach((img,i)=>{ if(photos[i]){img.src=photos[i];img.loading=i<4?'eager':'lazy';img.decoding='async';} });
+            };
+            setPhotos();
+            const observer=new MutationObserver(setPhotos);
+            observer.observe(document.body,{childList:true,subtree:true});
+          })();
+          </script>
+          '''
+          s=s.replace('</head>',css+'\\n</head>',1)
+          s=s.replace('</body>',js+'\\n</body>',1)
+          s=s.replace('</html>',marker+'\\n</html>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit V3
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Polish navigation and give every product a unique photo"
+          git push
