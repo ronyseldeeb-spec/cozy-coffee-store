@@ -9,38 +9,50 @@ permissions:
 
 jobs:
   upgrade:
-    if: github.event.head_commit.message != 'Apply Cozy Brews premium home UI'
+    if: github.event.head_commit.message != 'Fix premium UI injection newlines'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Upgrade interface
+      - name: Fix injected UI markup
         run: |
           python3 <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
 
-          css = r'''\n<style id="cozy-premium-home-css">\n/* ===== COZY BREWS PREMIUM HOME ===== */\n.cozy-home {\n  position:relative; min-height:calc(100svh - 106px); overflow:hidden;\n  display:flex; flex-direction:column; justify-content:space-between;\n  margin:0; color:#fffaf5; background:#24150e;\n}\n.cozy-home::before {\n  content:""; position:absolute; inset:0;\n  background-image:url("https://images.unsplash.com/photo-1525596201491-f6eae338a205?auto=format&fit=crop&fm=jpg&q=80&w=1800");\n  background-size:cover; background-position:center; filter:blur(3px); transform:scale(1.045);\n}\n.cozy-home::after {\n  content:""; position:absolute; inset:0;\n  background:linear-gradient(180deg,rgba(28,16,10,.52) 0%,rgba(31,17,10,.68) 45%,rgba(24,13,8,.92) 100%);\n}\n.cozy-home-inner { position:relative; z-index:2; width:min(1120px,92%); margin:0 auto; padding:clamp(28px,7vw,74px) 0 30px; }\n.cozy-home-brand { display:flex; align-items:center; gap:10px; color:#f7dfca; font-size:.68rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; }\n.cozy-home-brand span { width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);font-size:1rem; }\n.cozy-home-copy { max-width:760px; margin-top:clamp(38px,9vh,86px); }\n.cozy-home-kicker { font-size:.7rem; letter-spacing:2.2px; font-weight:800; color:#e6b993; }\n.cozy-home h1 { font-family:'Playfair Display',serif; font-size:clamp(3.3rem,8vw,7.3rem); line-height:.9; letter-spacing:-3px; margin:12px 0 20px; text-shadow:0 8px 30px rgba(0,0,0,.24); }\n.cozy-home h1 em { color:#e2a782; font-style:italic; }\n.cozy-home-sub { max-width:600px; color:rgba(255,246,237,.82); font-size:clamp(.82rem,1.5vw,1rem); line-height:1.7; }\n.cozy-home-actions { display:grid; grid-template-columns:repeat(2,minmax(0,260px)); gap:13px; margin-top:28px; }\n.cozy-main-action { border:1px solid rgba(255,255,255,.22); min-height:92px; border-radius:22px; padding:18px; text-align:left; cursor:pointer; color:#fffaf5; background:rgba(255,255,255,.10); backdrop-filter:blur(14px); transition:transform .22s ease,background .22s ease,border-color .22s ease; }\n.cozy-main-action:hover { transform:translateY(-3px); background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.38); }\n.cozy-main-action.primary { background:#f4e3d5; color:#2d1a0e; border-color:#f4e3d5; box-shadow:0 14px 35px rgba(0,0,0,.2); }\n.cozy-main-action .icon { font-size:1.25rem; margin-bottom:10px; display:block; }\n.cozy-main-action strong { display:block; font-family:'Playfair Display',serif; font-size:1.35rem; line-height:1; }\n.cozy-main-action small { display:block; margin-top:5px; font-size:.65rem; opacity:.72; }\n.cozy-home-footer { position:relative; z-index:2; width:min(1120px,92%); margin:0 auto; padding:20px 0 max(24px,env(safe-area-inset-bottom)); display:flex; align-items:end; justify-content:space-between; gap:25px; border-top:1px solid rgba(255,255,255,.14); }\n.cozy-contact-title { font-family:'Playfair Display',serif; font-size:1.35rem; margin-bottom:4px; }\n.cozy-contact-copy { color:rgba(255,246,237,.65); font-size:.65rem; }\n.cozy-socials { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }\n.cozy-social { width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.09);font-weight:800;transition:.2s; }\n.cozy-social:hover { background:rgba(255,255,255,.17);transform:translateY(-2px); }\n.cozy-whatsapp { width:auto; min-width:138px; padding:0 13px; gap:8px; display:flex; justify-content:center; font-size:.67rem; }\n.cozy-whatsapp b { font-size:.72rem; }\n.cozy-home.hidden { display:none !important; }\n.cozy-menu-view-hidden { display:none !important; }\n.cozy-menu-view-visible { display:block !important; }\n.cozy-home-back { display:flex; align-items:center; gap:7px; border:0; background:transparent; color:#9b6043; font-weight:800; font-size:.72rem; cursor:pointer; margin:8px 0 4px; padding:7px 0; }\n@media(max-width:800px){\n  .cozy-home { min-height:calc(100svh - 106px); }\n  .cozy-home-inner { width:calc(100% - 28px); padding:25px 0 20px; }\n  .cozy-home-brand { font-size:.58rem;letter-spacing:1.6px; }\n  .cozy-home-copy { margin-top:15vh; }\n  .cozy-home h1 { font-size:clamp(3.15rem,16vw,5rem); letter-spacing:-2px; margin:9px 0 14px; }\n  .cozy-home-sub { font-size:.76rem; line-height:1.55; max-width:340px; }\n  .cozy-home-actions { grid-template-columns:1fr; gap:9px; margin-top:22px; }\n  .cozy-main-action { min-height:76px; padding:14px 15px; border-radius:18px; }\n  .cozy-main-action .icon { display:inline-block; margin:0 9px 0 0; font-size:1rem; vertical-align:middle; }\n  .cozy-main-action strong { display:inline; font-size:1.15rem; }\n  .cozy-main-action small { margin-left:29px; margin-top:3px; }\n  .cozy-home-footer { width:calc(100% - 28px); padding:17px 0 max(18px,env(safe-area-inset-bottom)); align-items:flex-start; flex-direction:column; gap:13px; }\n  .cozy-socials { width:100%; justify-content:flex-start; }\n  .cozy-social { width:42px;height:42px;border-radius:13px; }\n  .cozy-whatsapp { width:auto; min-width:145px; }\n}\n@media(max-height:700px) and (max-width:800px){\n  .cozy-home-copy { margin-top:8vh; }\n  .cozy-home h1 { font-size:2.8rem; }\n  .cozy-main-action { min-height:65px; }\n}\n</style>\n'''
+          # The previous workflow accidentally wrote the two UI blocks with
+          # literal backslash-n characters, so the JavaScript never executed.
+          # Normalize only the generated premium blocks.
+          for marker, closing in [
+              ('<style id="cozy-premium-home-css">', '</style>'),
+              ('<script id="cozy-premium-home-js">', '</script>')
+          ]:
+              start = html.find(marker)
+              if start == -1:
+                  continue
+              end = html.find(closing, start)
+              if end == -1:
+                  continue
+              end += len(closing)
+              block = html[start:end]
+              block = block.replace('\\\\n', '\n')
+              html = html[:start] + block + html[end:]
 
-          html_block = r'''\n<section id="cozy-home" class="cozy-home" aria-label="Cozy Brews home">\n  <div class="cozy-home-inner">\n    <div class="cozy-home-brand"><span>☕</span> Cozy Brews & Bakery</div>\n    <div class="cozy-home-copy">\n      <span class="cozy-home-kicker">YOUR LITTLE COZY ESCAPE</span>\n      <h1>Good coffee.<br><em>Good mood.</em></h1>\n      <p class="cozy-home-sub">Fresh coffee, buttery croissants, comforting bites, and a cozy place to find your next favorite.</p>\n      <div class="cozy-home-actions">\n        <button class="cozy-main-action primary" type="button" onclick="cozyOpenMenu()"><span class="icon">☕</span><strong>Menu</strong><small>Explore every drink, bake & price</small></button>\n        <button class="cozy-main-action" type="button" onclick="cozyOpenReviews()"><span class="icon">★</span><strong>Reviews</strong><small>See what the cozy crowd is saying</small></button>\n      </div>\n    </div>\n  </div>\n  <footer class="cozy-home-footer">\n    <div>\n      <div class="cozy-contact-title">Contact us</div>\n      <div class="cozy-contact-copy">Follow the journey or message us directly.</div>\n    </div>\n    <div class="cozy-socials" aria-label="Social links">\n      <a class="cozy-social" href="#" aria-label="Instagram" onclick="return false">◎</a>\n      <a class="cozy-social" href="#" aria-label="Facebook" onclick="return false">f</a>\n      <a class="cozy-social" href="#" aria-label="TikTok" onclick="return false">♪</a>\n      <a class="cozy-social cozy-whatsapp" href="https://wa.me/201068531145" target="_blank" rel="noopener" aria-label="WhatsApp"><span>💬</span><b>01068531145</b></a>\n    </div>\n  </footer>\n</section>\n'''
-
-          js = r'''\n<script id="cozy-premium-home-js">\n(function(){\n  function initCozyHome(){\n    const store = document.getElementById('store-page');\n    if(!store || document.getElementById('cozy-home')) return;\n    store.insertAdjacentHTML('afterbegin', `''' + html_block.replace('`','\\`') + r'''`);\n    const home = document.getElementById('cozy-home');\n    const menuContent = Array.from(store.children).filter(el => el.id !== 'cozy-home');\n    menuContent.forEach(el => el.classList.add('cozy-menu-view-hidden'));\n\n    window.cozyShowHome = function(){\n      home.classList.remove('hidden');\n      menuContent.forEach(el => el.classList.add('cozy-menu-view-hidden'));\n      window.scrollTo({top:0,behavior:'smooth'});\n    };\n    window.cozyOpenMenu = function(){\n      home.classList.add('hidden');\n      menuContent.forEach(el => el.classList.remove('cozy-menu-view-hidden'));\n      const cats=document.getElementById('categories');\n      if(cats) setTimeout(()=>cats.scrollIntoView({behavior:'smooth',block:'start'}),60);\n    };\n    window.cozyOpenReviews = function(){\n      if(typeof openReviewsPage === 'function') openReviewsPage();\n    };\n    const originalSwitch = window.switchPage;\n    if(typeof originalSwitch === 'function' && !window.__cozySwitchWrapped){\n      window.__cozySwitchWrapped = true;\n      window.switchPage = function(page){\n        if(page === 'store'){\n          originalSwitch('store');\n          window.cozyShowHome();\n          return;\n        }\n        originalSwitch(page);\n      };\n    }\n    const brand = document.querySelector('.brand-area');\n    if(brand){ brand.onclick=function(){ window.cozyShowHome(); }; }\n    const menuBtn=document.querySelector('.menu-trigger');\n    if(menuBtn){ menuBtn.addEventListener('click',()=>{ setTimeout(()=>window.cozyShowHome(),20); }); }\n  }\n  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initCozyHome); else initCozyHome();\n})();\n</script>\n'''
-
-          if 'id="cozy-premium-home-css"' not in html:
-              html = html.replace('</head>', css + '\n</head>', 1)
-          if 'id="cozy-premium-home-js"' not in html:
-              html = html.replace('</body>', js + '\n</body>', 1)
+          # Also remove a literal \n immediately before the generated tags.
+          html = html.replace('\\n<style id="cozy-premium-home-css">', '<style id="cozy-premium-home-css">')
+          html = html.replace('\\n<script id="cozy-premium-home-js">', '<script id="cozy-premium-home-js">')
 
           path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit upgraded interface
+      - name: Commit fix
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Apply Cozy Brews premium home UI"
+          git diff --cached --quiet || git commit -m "Fix premium UI injection newlines"
           git push
