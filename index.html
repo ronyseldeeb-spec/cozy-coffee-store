@@ -18,8 +18,45 @@
 .modal{position:fixed;inset:0;z-index:100;background:rgba(29,17,10,.55);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:14px}.modal.open{display:flex}.modal-box{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--paper);border-radius:23px;padding:20px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.2)}.close{position:absolute;right:13px;top:13px;width:36px;height:36px;border:0;border-radius:12px;background:#f0e3d8;font-size:1.2rem}.modal-box h2{font:600 1.65rem 'Playfair Display',serif;margin:4px 0 5px}.modal-box p{font-size:.72rem;color:var(--muted)}.stars-pick{display:flex;justify-content:center;gap:7px;margin:17px 0}.stars-pick button{border:0;background:#f2e5da;color:#c7a071;width:43px;height:43px;border-radius:12px;font-size:1.2rem}.stars-pick button.active{background:#c38b4f;color:#fff}.field{width:100%;border:1px solid var(--line);background:#fffaf6;border-radius:12px;padding:11px;margin-top:8px;outline:0}.submit{width:100%;margin-top:10px;min-height:48px;border:0;border-radius:14px;background:var(--ink);color:#fff;font-weight:800}.toast{position:fixed;left:50%;bottom:25px;z-index:200;transform:translate(-50%,150%);opacity:0;visibility:hidden;background:var(--ink);color:#fff;padding:11px 17px;border-radius:30px;font-size:.72rem;transition:.3s;box-shadow:0 12px 30px rgba(0,0,0,.18)}.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
 @media(max-width:700px){.home-content{width:calc(100% - 28px);padding:22px 0 17px}.hero-copy{margin:auto 0 35px}.home h1{font-size:clamp(3.1rem,16vw,5rem);letter-spacing:-2px}.home-sub{font-size:.76rem}.home-actions{grid-template-columns:1fr;gap:9px;margin-top:20px}.home-action{min-height:75px;padding:14px 15px;border-radius:18px}.home-action .ico{display:inline;margin:0 8px 0 0}.home-action strong{display:inline;font-size:1.18rem}.home-action small{display:block;margin-left:28px;margin-top:3px}.contact{align-items:flex-start;flex-direction:column;gap:12px}.socials{justify-content:flex-start}.social{height:41px}.topbar{height:62px;padding:0 12px}.topbar h1{font-size:1.05rem}.account-btn{font-size:.68rem;padding:0 9px}.cart-btn{font-size:.68rem;padding:0 9px}.cats{top:62px;padding:7px 12px}.menu-head{padding:28px 14px 16px}.menu-head h2,.review-head h2{font-size:2.5rem}.menu-grid,.reviews{padding-left:14px;padding-right:14px}.products{grid-template-columns:1fr;gap:9px}.card{display:grid;grid-template-columns:88px minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px;border-radius:18px}.photo{width:88px;height:88px;border-radius:14px}.card-body{padding:0}.card h3{font-size:.83rem}.card p{font-size:.64rem;margin-bottom:5px}.card-bottom{gap:6px}.add{width:40px;height:36px;padding:0;font-size:0}.add:after{content:'+';font-size:1.1rem}.review-toolbar{align-items:flex-start;gap:10px}.modal{align-items:flex-end;padding:0}.modal-box{border-radius:23px 23px 0 0;padding:18px 15px calc(18px + env(safe-area-inset-bottom));max-height:90svh}.toast{left:14px;right:14px;bottom:18px;transform:translateY(150%);text-align:center}.toast.show{transform:translateY(0)}}
 </style>
+
+<style id="cozy-polish-css">
+/* COZY-POLISH-V2 */
+.cozy-hamburger{width:44px;height:44px;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.1);backdrop-filter:blur(14px);display:grid;place-items:center;cursor:pointer;transition:.25s;flex:none;box-shadow:0 8px 25px rgba(0,0,0,.12)}
+.cozy-hamburger:hover{transform:translateY(-2px);background:rgba(255,255,255,.16)}
+.cozy-hamburger span,.cozy-hamburger span:before,.cozy-hamburger span:after{content:"";display:block;width:18px;height:2px;background:currentColor;border-radius:99px;position:relative;transition:.25s}
+.cozy-hamburger span:before{position:absolute;top:-6px}.cozy-hamburger span:after{position:absolute;top:6px}
+.cozy-hamburger.is-open span{background:transparent}.cozy-hamburger.is-open span:before{transform:rotate(45deg);top:0}.cozy-hamburger.is-open span:after{transform:rotate(-45deg);top:0}
+.cozy-drawer-backdrop{position:fixed;inset:0;background:rgba(12,7,4,.46);backdrop-filter:blur(5px);z-index:9998;opacity:0;pointer-events:none;transition:.28s}
+.cozy-drawer-backdrop.open{opacity:1;pointer-events:auto}
+.cozy-drawer{position:fixed;top:12px;bottom:12px;left:12px;width:min(360px,calc(100vw - 24px));z-index:9999;background:rgba(252,248,242,.96);color:#21150f;border:1px solid rgba(55,30,18,.12);border-radius:28px;box-shadow:0 30px 90px rgba(0,0,0,.3);transform:translateX(calc(-100% - 30px));transition:.34s cubic-bezier(.2,.8,.2,1);padding:22px;display:flex;flex-direction:column;overflow:auto}
+.cozy-drawer.open{transform:translateX(0)}
+.cozy-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}.cozy-drawer-brand{font:700 1.35rem 'Playfair Display',serif}.cozy-close{width:40px;height:40px;border-radius:12px;border:0;background:#21150f;color:white;font-size:20px;cursor:pointer}
+.cozy-drawer-nav{display:grid;gap:10px}.cozy-drawer-nav button{border:0;background:#fff;border:1px solid rgba(55,30,18,.08);border-radius:17px;padding:16px;text-align:left;font:700 1rem 'DM Sans',sans-serif;color:#21150f;cursor:pointer;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(50,30,20,.05);transition:.2s}.cozy-drawer-nav button:hover{transform:translateX(4px);background:#f7eee5}.cozy-drawer-nav .ico{width:28px;text-align:center;font-size:1.15rem}
+.cozy-drawer-foot{margin-top:auto;padding-top:24px;color:#806f63;font-size:.85rem;line-height:1.6}.cozy-drawer-wa{display:inline-flex;margin-top:10px;padding:11px 14px;border-radius:12px;background:#21150f;color:#fff;text-decoration:none;font-weight:700}
+.cozy-home-enhance{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px auto 0;max-width:760px;width:100%}.cozy-feature{padding:16px;border-radius:20px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);color:#fff;box-shadow:0 12px 35px rgba(0,0,0,.12)}.cozy-feature b{display:block;font-size:.95rem;margin-bottom:5px}.cozy-feature span{font-size:.78rem;color:rgba(255,247,239,.72)}
+.cozy-scroll-top{position:fixed;right:18px;bottom:18px;width:45px;height:45px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:#21150f;color:#fff;z-index:500;opacity:0;pointer-events:none;transform:translateY(10px);transition:.25s;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.2)}.cozy-scroll-top.show{opacity:1;pointer-events:auto;transform:none}
+.cozy-live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#79c267;box-shadow:0 0 0 5px rgba(121,194,103,.13);margin-right:8px}
+@media(max-width:650px){.cozy-home-enhance{grid-template-columns:1fr;margin-top:18px}.cozy-feature{padding:13px 15px}.cozy-drawer{border-radius:24px}.cozy-hamburger{width:42px;height:42px}}
+</style>
+
 </head>
 <body>
+
+<div id="cozy-polish-backdrop" class="cozy-drawer-backdrop"></div>
+<aside id="cozy-polish-drawer" class="cozy-drawer" aria-hidden="true">
+  <div class="cozy-drawer-head"><div class="cozy-drawer-brand">Cozy Brews</div><button class="cozy-close" id="cozyClose" aria-label="Close menu">×</button></div>
+  <div class="cozy-drawer-nav">
+    <button data-cozy-action="home"><span class="ico">⌂</span>Home</button>
+    <button data-cozy-action="menu"><span class="ico">☕</span>Menu</button>
+    <button data-cozy-action="reviews"><span class="ico">★</span>Reviews</button>
+    <button data-cozy-action="account"><span class="ico">♙</span>Account</button>
+    <button data-cozy-action="cart"><span class="ico">🛒</span>Your Cart</button>
+    <button data-cozy-action="contact"><span class="ico">✦</span>Contact Us</button>
+  </div>
+  <div class="cozy-drawer-foot"><span class="cozy-live-dot"></span>Made for slow mornings, good coffee & warm conversations.<br><a class="cozy-drawer-wa" href="https://wa.me/201068531145" target="_blank" rel="noopener">WhatsApp us</a></div>
+</aside>
+<button id="cozyScrollTop" class="cozy-scroll-top" aria-label="Back to top">↑</button>
+
 <section id="home" class="home">
  <div class="home-bg"></div><div class="home-overlay"></div>
  <div class="home-content">
@@ -97,5 +134,30 @@ function escapeHtml(s){const d=document.createElement('div');d.textContent=s;ret
 function toast(msg){const t=$('toast');clearTimeout(toastTimer);t.textContent=msg;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');toastTimer=setTimeout(()=>t.classList.remove('show'),4000)}
 $('cats')&&categories();
 </script>
+
+<script id="cozy-polish-js">
+/* COZY-POLISH-V2 */
+(()=>{
+  const body=document.body;
+  body.insertAdjacentHTML('afterbegin', `
+    <button id="cozyHamburger" class="cozy-hamburger" aria-label="Open navigation" aria-expanded="false"><span></span></button>
+  `);
+  const ham=document.getElementById('cozyHamburger');
+  const drawer=document.getElementById('cozy-polish-drawer');
+  const back=document.getElementById('cozy-polish-backdrop');
+  const close=document.getElementById('cozyClose');
+  const top=document.getElementById('cozyScrollTop');
+  const open=()=>{ham.classList.add('is-open');ham.setAttribute('aria-expanded','true');drawer.classList.add('open');back.classList.add('open');drawer.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'};
+  const shut=()=>{ham.classList.remove('is-open');ham.setAttribute('aria-expanded','false');drawer.classList.remove('open');back.classList.remove('open');drawer.setAttribute('aria-hidden','true');document.body.style.overflow=''};
+  ham.addEventListener('click',open);close.addEventListener('click',shut);back.addEventListener('click',shut);document.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
+  const clickByText=(texts)=>{const els=[...document.querySelectorAll('button,a')];const el=els.find(x=>texts.some(t=>(x.textContent||'').trim().toLowerCase().includes(t)));if(el){shut();el.click();return true}return false};
+  document.querySelectorAll('[data-cozy-action]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.cozyAction;if(a==='home'){shut();window.scrollTo({top:0,behavior:'smooth'})}else if(a==='menu')clickByText(['menu']);else if(a==='reviews')clickByText(['reviews']);else if(a==='account')clickByText(['account']);else if(a==='cart')clickByText(['cart']);else if(a==='contact'){shut();document.querySelector('.contact')?.scrollIntoView({behavior:'smooth',block:'center'})}}));
+  window.addEventListener('scroll',()=>top.classList.toggle('show',window.scrollY>450),{passive:true});top.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  const host=document.querySelector('.home-content');
+  if(host&&!document.querySelector('.cozy-home-enhance')){const x=document.createElement('div');x.className='cozy-home-enhance';x.innerHTML='<div class="cozy-feature"><b>☕ Crafted with care</b><span>Comforting coffee, made to feel like home.</span></div><div class="cozy-feature"><b>🥐 Fresh bakery</b><span>Sweet and savory favorites for every mood.</span></div><div class="cozy-feature"><b>✨ Your cozy corner</b><span>Easy ordering, simple navigation, zero clutter.</span></div>';host.appendChild(x)}
+})();
+</script>
+
 </body>
+<!-- COZY-POLISH-V2 -->
 </html>
