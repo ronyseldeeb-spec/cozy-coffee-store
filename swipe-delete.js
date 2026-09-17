@@ -77,6 +77,7 @@
       style.id='cozy-icon-polish';
       style.textContent=`
         .menu-trigger,.top-nav,.top-cart,.side-menu-list button,.mobile-nav-item{position:relative;}
+        .logo{transform:translateX(-18px);}
         .menu-trigger svg,.top-nav svg,.top-cart svg,.side-menu-icon svg,.mobile-nav-item svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s ease,filter .25s ease;}
         .menu-trigger{display:grid!important;place-items:center;transition:transform .25s ease,box-shadow .25s ease,background .25s ease!important;}
         .menu-trigger:hover{transform:translateY(-2px) rotate(-2deg);box-shadow:0 12px 26px rgba(74,43,27,.16)!important;background:#EAD8C9!important;}
