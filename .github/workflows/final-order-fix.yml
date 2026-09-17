@@ -1,0 +1,55 @@
+name: Final order fix
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.event.head_commit.message != 'Final order fix applied'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clean and patch index
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html'); html=p.read_text(encoding='utf-8')
+          html=re.sub(r'(?:\\\\n|\\n|\n)*<style id="cozy-premium-home-css">.*?</style>(?:\\\\n|\\n|\n)*','\n',html,flags=re.S)
+          html=re.sub(r'(?:\\\\n|\\n|\n)*<script id="cozy-premium-home-js">.*?</script>(?:\\\\n|\\n|\n)*','\n',html,flags=re.S)
+          marker='<!-- COZY CANCELLED ORDER SWIPE DELETE -->'
+          if marker not in html:
+              js=r'''<!-- COZY CANCELLED ORDER SWIPE DELETE -->
+<script>
+(function(){
+ function setup(){
+  document.querySelectorAll('#active-order-container .multi-order-card').forEach(card=>{
+   if(card.dataset.swipeReady)return;
+   const pill=card.querySelector('.order-status-pill');
+   if(!pill||!/cancelled/i.test(pill.textContent||''))return;
+   card.dataset.swipeReady='1';card.style.touchAction='pan-y';let sx=0,sy=0;
+   card.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY},{passive:true});
+   card.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(dx<90||Math.abs(dx)<=Math.abs(dy))return;
+    const cards=[...document.querySelectorAll('#active-order-container .multi-order-card')],i=cards.indexOf(card);let orders=[];try{orders=JSON.parse(localStorage.getItem('cozy_orders')||'[]')}catch(_){return}
+    const sorted=orders.slice().sort((a,b)=>b.order_time-a.order_time),o=sorted[i];if(!o||o.status!=='cancelled')return;
+    localStorage.setItem('cozy_orders',JSON.stringify(orders.filter(x=>x.id!==o.id)));card.style.transition='transform .25s ease,opacity .25s ease';card.style.transform='translateX(110%)';card.style.opacity='0';setTimeout(()=>{if(typeof renderTrackerModalContent==='function')renderTrackerModalContent()},250);
+   },{passive:true});
+  });
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n=[];let x;while(x=w.nextNode())n.push(x);n.forEach(t=>{if(t.nodeValue&&t.nodeValue.includes('\\n'))t.nodeValue=t.nodeValue.replace(/\\\\n/g,'')});
+ }
+ document.addEventListener('DOMContentLoaded',()=>{setup();const c=document.getElementById('active-order-container');if(c)new MutationObserver(setup).observe(c,{childList:true,subtree:true})});
+})();
+</script>
+'''
+              html=html.replace('</body>',js+'</body>',1)
+          p.write_text(html,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Final order fix applied'
+          git push
